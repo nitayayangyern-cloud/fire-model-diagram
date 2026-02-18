@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนภาพระบบพยากรณ์การลามของไฟป่า</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1e3e 50%, #0d1230 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        /* Title */
+        .main-title {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .main-title h1 {
+            font-size: 30px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff6b35, #ffb347, #ff6b35);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .main-title .sub {
+            font-size: 16px;
+            color: #8892b0;
+            font-weight: 300;
+        }
+
+        .main-title .ref {
+            font-size: 12px;
+            color: #5a6380;
+            margin-top: 4px;
+        }
+
+        /* Flow Arrow */
+        .flow-arrow {
+            text-align: center;
+            margin: 14px 0;
+            font-size: 26px;
+            color: #4a5580;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.4
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        /* Section */
+        .section {
+            border-radius: 16px;
+            padding: 22px 26px;
+            margin-bottom: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .section h2 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .step-num {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .s-input {
+            background: rgba(34, 211, 238, 0.06);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+        }
+
+        .s-input::before {
+            background: linear-gradient(90deg, #22d3ee, #06b6d4);
+        }
+
+        .s-input h2 {
+            color: #22d3ee;
+        }
+
+        .s-input .step-num {
+            background: #22d3ee;
+            color: #0a0e27;
+        }
+
+        .s-cluster {
+            background: rgba(251, 146, 60, 0.06);
+            border: 1px solid rgba(251, 146, 60, 0.2);
+        }
+
+        .s-cluster::before {
+            background: linear-gradient(90deg, #fb923c, #f97316);
+        }
+
+        .s-cluster h2 {
+            color: #fb923c;
+        }
+
+        .s-cluster .step-num {
+            background: #fb923c;
+            color: #0a0e27;
+        }
+
+        .s-rothermel {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .s-rothermel::before {
+            background: linear-gradient(90deg, #ef4444, #f97316);
+        }
+
+        .s-rothermel h2 {
+            color: #ef4444;
+        }
+
+        .s-rothermel .step-num {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .s-ca {
+            background: rgba(250, 204, 21, 0.06);
+            border: 1px solid rgba(250, 204, 21, 0.2);
+        }
+
+        .s-ca::before {
+            background: linear-gradient(90deg, #facc15, #f59e0b);
+        }
+
+        .s-ca h2 {
+            color: #facc15;
+        }
+
+        .s-ca .step-num {
+            background: #facc15;
+            color: #0a0e27;
+        }
+
+        .s-risk {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .s-risk::before {
+            background: linear-gradient(90deg, #a855f7, #7c3aed);
+        }
+
+        .s-risk h2 {
+            color: #a855f7;
+        }
+
+        .s-risk .step-num {
+            background: #a855f7;
+            color: #fff;
+        }
+
+        .s-output {
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .s-output::before {
+            background: linear-gradient(90deg, #22c55e, #10b981);
+        }
+
+        .s-output h2 {
+            color: #22c55e;
+        }
+
+        .s-output .step-num {
+            background: #22c55e;
+            color: #0a0e27;
+        }
+
+        /* Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Item */
+        .item {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            padding: 10px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .item .label {
+            font-size: 10px;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .item .val {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e6f0;
+        }
+
+        .item .val small {
+            font-size: 11px;
+            font-weight: 400;
+            color: #8892b0;
+        }
+
+        /* Formula */
+        .formula-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin: 8px 0;
+            border-left: 3px solid;
+        }
+
+        .formula-box .ftitle {
+            font-size: 12px;
+            color: #8892b0;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .formula-box .formula {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .formula-box .explain {
+            font-size: 11px;
+            color: #6b7394;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        /* Table */
+        .ptable {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .ptable th {
+            text-align: left;
+            padding: 5px 8px;
+            color: #8892b0;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .ptable td {
+            padding: 4px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #c8cfe0;
+        }
+
+        .ptable td:first-child {
+            font-weight: 600;
+            color: #e0e6f0;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 2px 3px;
+        }
+
+        .badge-water {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-urban {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .badge-block {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .note {
+            font-size: 11px;
+            color: #6b7394;
+            margin-top: 6px;
+            padding-left: 10px;
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hl-cyan {
+            color: #22d3ee;
+        }
+
+        .hl-orange {
+            color: #fb923c;
+        }
+
+        .hl-red {
+            color: #ef4444;
+        }
+
+        .hl-yellow {
+            color: #facc15;
+        }
+
+        .hl-green {
+            color: #22c55e;
+        }
+
+        .hl-purple {
+            color: #a78bfa;
+        }
+
+        /* Timestep visual */
+        .ts-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .ts-visual {
+            flex: 0 0 190px;
+            position: relative;
+            height: 190px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ts-ring {
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ts-ring-4 {
+            width: 180px;
+            height: 180px;
+            background: rgba(250, 204, 21, 0.08);
+            border: 1px solid rgba(250, 204, 21, 0.2);
+        }
+
+        .ts-ring-3 {
+            width: 140px;
+            height: 140px;
+            background: rgba(250, 204, 21, 0.12);
+            border: 1px solid rgba(250, 204, 21, 0.25);
+        }
+
+        .ts-ring-2 {
+            width: 105px;
+            height: 105px;
+            background: rgba(251, 146, 60, 0.15);
+            border: 1px solid rgba(251, 146, 60, 0.3);
+        }
+
+        .ts-ring-1 {
+            width: 72px;
+            height: 72px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .ts-ring-0 {
+            width: 38px;
+            height: 38px;
+            background: rgba(239, 68, 68, 0.6);
+            border: 2px solid #ef4444;
+        }
+
+        /* Theory section */
+        .s-theory {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .s-theory::before {
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+        }
+
+        .s-theory h2 {
+            color: #38bdf8;
+        }
+
+        .s-theory .step-num {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #fff;
+        }
+
+        .theory-block {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 10px 0;
+            border-left: 3px solid #38bdf8;
+        }
+
+        .theory-block h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .theory-block p,
+        .theory-block li {
+            font-size: 12px;
+            color: #b0b8d0;
+            line-height: 1.7;
+        }
+
+        .theory-block ul {
+            padding-left: 18px;
+            margin: 4px 0;
+        }
+
+        .flow-diagram {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.7;
+            color: #c8cfe0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .example-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .example-box .ex-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .example-box .ex-detail {
+            font-size: 11px;
+            color: #8892b0;
+            line-height: 1.7;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 16px 0;
+        }
+
+        /* ===== Integration Flowchart ===== */
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin: 12px 0;
+        }
+
+        .fc-node {
+            width: 100%;
+            max-width: 560px;
+            border-radius: 12px;
+            padding: 14px 18px;
+            position: relative;
+        }
+
+        .fc-node-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .fc-node-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .fc-node-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .fc-node-body {
+            font-size: 11px;
+            color: #b0b8d0;
+            line-height: 1.7;
+            padding-left: 42px;
+        }
+
+        .fc-node-body .fc-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            color: #cbd5e1;
+            margin: 0 2px;
+        }
+
+        .fc-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 32px;
+            position: relative;
+        }
+
+        .fc-arrow-line {
+            width: 2px;
+            flex: 1;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
+        }
+
+        .fc-arrow-head {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            line-height: 1;
+            margin-top: -2px;
+        }
+
+        /* Node color themes */
+        .fc-input {
+            background: rgba(34, 211, 238, 0.07);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+        }
+
+        .fc-input .fc-node-icon {
+            background: #22d3ee;
+            color: #0c1024;
+        }
+
+        .fc-input .fc-node-title {
+            color: #22d3ee;
+        }
+
+        .fc-rothermel {
+            background: rgba(239, 68, 68, 0.07);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .fc-rothermel .fc-node-icon {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .fc-rothermel .fc-node-title {
+            color: #ef4444;
+        }
+
+        .fc-ca {
+            background: rgba(250, 204, 21, 0.07);
+            border: 1px solid rgba(250, 204, 21, 0.25);
+        }
+
+        .fc-ca .fc-node-icon {
+            background: #facc15;
+            color: #0c1024;
+        }
+
+        .fc-ca .fc-node-title {
+            color: #facc15;
+        }
+
+        .fc-output {
+            background: rgba(34, 197, 94, 0.07);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .fc-output .fc-node-icon {
+            background: #22c55e;
+            color: #0c1024;
+        }
+
+        .fc-output .fc-node-title {
+            color: #22c55e;
+        }
+
+        .fc-formula-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin: 6px 0 2px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #e2e8f0;
+            display: inline-block;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 11px;
+            color: #4a5580;
+            line-height: 1.6;
+        }
+
+        @media(max-width:640px) {
+
+            body {
+                padding: 16px 10px;
+            }
+
+            .section {
+                padding: 16px 14px;
+                border-radius: 12px;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .main-title h1 {
+                font-size: 20px;
+            }
+
+            .main-title .sub {
+                font-size: 13px;
+            }
+
+            .section h2 {
+                font-size: 16px;
+            }
+
+            /* Timestep visual */
+            .ts-wrap {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .ts-visual {
+                flex: 0 0 150px;
+                height: 150px;
+            }
+
+            .ts-ring-4 {
+                width: 140px;
+                height: 140px;
+            }
+
+            .ts-ring-3 {
+                width: 110px;
+                height: 110px;
+            }
+
+            .ts-ring-2 {
+                width: 85px;
+                height: 85px;
+            }
+
+            .ts-ring-1 {
+                width: 60px;
+                height: 60px;
+            }
+
+            .ts-ring-0 {
+                width: 32px;
+                height: 32px;
+            }
+
+            /* Tables scroll */
+            .ptable {
+                font-size: 11px;
+            }
+
+            .ptable th,
+            .ptable td {
+                padding: 3px 5px;
+                font-size: 10px;
+            }
+
+            /* Flowchart nodes */
+            .fc-node {
+                padding: 10px 12px;
+            }
+
+            .fc-node-body {
+                padding-left: 0;
+                font-size: 10px;
+            }
+
+            .fc-node-icon {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
+
+            .fc-node-title {
+                font-size: 12px;
+            }
+
+            /* Theory section */
+            .theory-block {
+                padding: 12px 14px;
+            }
+
+            .theory-block h4 {
+                font-size: 12px;
+            }
+
+            .theory-block p,
+            .theory-block li {
+                font-size: 11px;
+            }
+
+            /* Formula */
+            .formula-box {
+                padding: 10px 12px;
+            }
+
+            .formula-box .formula {
+                font-size: 12px;
+                word-break: break-all;
+            }
+
+            .formula-box .explain {
+                font-size: 10px;
+            }
+
+            /* CA branch diagram - stack vertically */
+            .ca-branch-container {
+                flex-direction: column !important;
+            }
+
+            /* Output grid */
+            .fc-node-body [style*="grid-template-columns:1fr 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="main-title">
+            <h1>ระบบพยากรณ์การลามของไฟป่า</h1>
+            <div class="sub">Cellular Automata + Rothermel (1972) Fire Spread Model</div>
+            <div class="ref">อ้างอิง: Rothermel, R.C. (1972) USDA Forest Service Research Paper INT-115 (PB210095) |
+                Anderson (1982) Fuel Models</div>
+        </div>
+
+        <!-- ========== 1. INPUT ========== -->
+        <div class="section s-input">
+            <h2><span class="step-num">1</span> ข้อมูลนำเข้า (Input Data)</h2>
+            <div class="grid-3">
+                <div class="item">
+                    <div class="label">จุดความร้อน (Hotspots)</div>
+                    <div class="val">MODIS / VIIRS</div>
+                    <div style="font-size:11px; color:#8892b0;">ดาวเทียม NASA — ตรวจจุดไฟรายชั่วโมง<br>ความละเอียด 375
+                        ม. (VIIRS)</div>
+                </div>
+                <div class="item">
+                    <div class="label">สภาพอากาศ (Weather)</div>
+                    <div class="val">Open-Meteo API</div>
+                    <div style="font-size:11px; color:#8892b0;">อัพเดตทุก 1 ชม.<br>อุณหภูมิ, ความชื้น, ลม</div>
+                </div>
+                <div class="label">ภูมิประเทศ (Terrain)</div>
+                <div class="val">PostGIS + DEM (SRTM)</div>
+                <div style="font-size:11px; color:#8892b0;">
+                    <b>Slope:</b> ความลาดชัน (ใช้คำนวณความเร็ว)<br>
+                    <b>Aspect:</b> ทิศความลาดชัน (ใช้ปรับทิศทางลม)<br>
+                    <b>Land Use:</b> สิ่งกีดขวาง (น้ำ/ชุมชน)
+                </div>
+            </div>
+        </div>
+        <h3 style="font-size:13px; color:#22d3ee; margin:12px 0 6px;">ดัชนีจากดาวเทียม</h3>
+        <div class="grid-2">
+            <div class="item">
+                <div class="label">FDI — Fire Danger Index</div>
+                <div class="val">ดัชนีอันตรายไฟป่า <small>ช่วง 0–1</small></div>
+                <div style="font-size:11px; color:#8892b0;">
+                    แหล่งข้อมูล: ตาราง <code style="color:#60a5fa;">fdi_v2.fdi_daily_pixels_375m</code><br>
+                    ใช้ค่าเฉลี่ยในพื้นที่ bbox ย้อนหลัง 30 วัน<br>
+                    ค่า default = 0.5 (กรณีไม่มีข้อมูล)<br>
+                    <span class="hl-cyan">FDI ต่ำ (&lt;0.3) → จำกัดการลาม</span>
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">NBR — Normalized Burn Ratio</div>
+                <div class="val">ดัชนีพื้นที่ไหม้ <small>ช่วง -1 ถึง +1</small></div>
+                <div style="font-size:11px; color:#8892b0;">
+                    แหล่งข้อมูล: ตาราง <code style="color:#60a5fa;">nbr_v2.nbr_daily_pixels_375m</code><br>
+                    ใช้ค่าเฉลี่ยในพื้นที่ bbox ย้อนหลัง 30 วัน<br>
+                    ค่า default = 0.0 (กรณีไม่มีข้อมูล)<br>
+                    <span class="hl-cyan">NBR &lt; -0.3 → พื้นที่เพิ่งไหม้ ลามช้า</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
+    <!-- ========== 2. CLUSTERING ========== -->
+    <div class="section s-cluster">
+        <h2><span class="step-num">2</span> การจัดกลุ่มจุดความร้อน (Clustering)</h2>
+        <div class="grid-2">
+            <div class="item">
+                <div class="label">ขั้นที่ 1: จัดกลุ่มตามตำบล</div>
+                <div class="val">จังหวัด + อำเภอ + ตำบล</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px;">
+                    ใช้ PostGIS spatial query จับคู่ hotspot กับขอบเขตตำบล
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">ขั้นที่ 2: แยก sub-cluster ตามระยะ</div>
+                <div class="val">ภายในตำบลเดียว ≤ <span class="hl-orange">3 กม.</span> = 1 คลัสเตอร์</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px;">
+                    จุด &gt; 3 กม. → แยกเป็นคลัสเตอร์ใหม่<br>
+                    ใช้สูตร Haversine: 6371 × 2 × arcsin(√a) กม.
+                </div>
+            </div>
+        </div>
+        <h3 style="font-size:13px; color:#fb923c; margin:12px 0 6px;">กริด Cellular Automata</h3>
+        <div class="grid-4">
+            <div class="item">
+                <div class="label">ขนาดเซลล์</div>
+                <div class="val">375 <small>ม.</small></div>
+                <div style="font-size:10px; color:#8892b0">= MODIS resolution</div>
+            </div>
+            <div class="item">
+                <div class="label">องศา</div>
+                <div class="val">0.00337°</div>
+                <div style="font-size:10px; color:#8892b0">375/111,320</div>
+            </div>
+            <div class="item">
+                <div class="label">เซลล์ที่ติดกัน</div>
+                <div class="val">≤ 562.5 <small>ม.</small></div>
+                <div style="font-size:10px; color:#8892b0">1.5 × cell size</div>
+            </div>
+            <div class="item">
+                <div class="label">Hotspot buffer</div>
+                <div class="val">× 0.7 <small>cell</small></div>
+                <div style="font-size:10px; color:#8892b0">~262 ม. รัศมี</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
+    <!-- ========== 3. ROTHERMEL ========== -->
+    <div class="section s-rothermel">
+        <h2><span class="step-num">3</span> แบบจำลอง Rothermel (1972)</h2>
+
+        <div class="formula-box" style="border-color:#ef4444;">
+            <div class="ftitle">สมการความเข้มของไฟ (Reaction Intensity) — PB210095 หน้า 36</div>
+            <div class="formula">I<sub>R</sub> = Γ' × w<sub>o</sub> × H × η<sub>M</sub> × η<sub>S</sub></div>
+            <div class="explain">
+                <b>Γ'</b> = อัตราปฏิกิริยาการเผา (Reaction velocity, 1/min) — คำนวณจาก σ, β, β_op<br>
+                <b>w<sub>o</sub></b> = น้ำหนักเชื้อเพลิงแห้งรวม (kg/m²) = w_1h + w_10h + w_100h<br>
+                <b>H</b> = ค่าความร้อนเชื้อเพลิง = <span class="hl-red">18,622 kJ/kg</span><br>
+                <b>η<sub>M</sub></b> = ตัวหน่วงความชื้น = 1 - 2.59r + 5.11r² - 3.52r³ &nbsp;(r =
+                M<sub>f</sub>/M<sub>x</sub>)<br>
+                <b>η<sub>S</sub></b> = ตัวหน่วงแร่ธาตุ = 0.174 × S<sub>T</sub><sup>-0.19</sup> &nbsp;(S<sub>T</sub>
+                = 0.0555)
+            </div>
+        </div>
+
+        <div class="formula-box" style="border-color:#f97316;">
+            <div class="ftitle">สมการอัตราการลาม (Rate of Spread) — PB210095 หน้า 34</div>
+            <div class="formula">R = (I<sub>R</sub> × ξ × (1 + φ<sub>W</sub> + φ<sub>S</sub>)) / (ρ<sub>b</sub> × ε
+                × Q<sub>ig</sub>)</div>
+            <div class="explain">
+                <b>ξ</b> = สัดส่วนฟลักซ์แผ่ (Propagating flux ratio) = e<sup>(0.792+0.681√σ)(β+0.1)</sup> /
+                (192+0.2595σ)<br>
+                <b>φ<sub>W</sub></b> = ตัวคูณลม (Wind coefficient) = C × U<sup>B</sup> × (β/0.0189)<sup>-E</sup><br>
+                <b>φ<sub>S</sub></b> = ตัวคูณความลาดชัน = 5.275 × β<sup>-0.3</sup> × (tan φ)<sup>2</sup> <span
+                    style="color:#fb923c; font-size:10px;">(φ = มุมความลาดชัน)</span><br>
+                <b>ρ<sub>b</sub></b> = ความหนาแน่นรวมเชื้อเพลิง (Bulk density) = w<sub>o</sub> / δ<br>
+                <b>ε</b> = ตัวเลขความร้อนจริง (Effective heating number) = 1.0<br>
+                <b>Q<sub>ig</sub></b> = ความร้อนจุดติดไฟ (Heat of preignition) = 250 + 1,116 × M<sub>f</sub><br>
+                <b>ผลลัพธ์ R</b> = อัตราลาม (ม./ชม.) — ค่าขั้นต่ำ = <span class="hl-orange">30 ม./ชม.</span>
+            </div>
+        </div>
+
+        <!-- Constants -->
+        <h3 style="font-size:13px; color:#f87171; margin:12px 0 6px;">ค่าคงที่ทางกายภาพ (Physical Constants)</h3>
+        <div class="grid-3">
+            <div class="item">
+                <div class="label">ค่าความร้อน (H)</div>
+                <div class="val">18,622 <small>kJ/kg</small></div>
+            </div>
+            <div class="item">
+                <div class="label">ความหนาแน่นอนุภาค (ρ<sub>p</sub>)</div>
+                <div class="val">513 <small>kg/m³</small></div>
+            </div>
+            <div class="item">
+                <div class="label">ปริมาณแร่ธาตุ (S<sub>T</sub>)</div>
+                <div class="val">0.0555</div>
+            </div>
+        </div>
+
+        <!-- Fuel Moisture -->
+        <h3 style="font-size:13px; color:#f87171; margin:12px 0 6px;">สมการความชื้นเชื้อเพลิง — Simard (1968)</h3>
+        <div class="formula-box" style="border-color:#a78bfa;">
+            <div class="formula" style="font-size:13px;">
+                RH &lt; 50% : M<sub>f</sub> = 0.03229 + 0.281073 × RH − 0.000578 × RH × T<br>
+                RH ≥ 50% : M<sub>f</sub> = 2.22749 + 0.160107 × RH − 0.01478 × T
+            </div>
+            <div class="explain">
+                T = อุณหภูมิ (°C) | RH = ความชื้นสัมพัทธ์ (%)<br>
+                <b>M<sub>f</sub></b> (Fuel Moisture Content) = สัดส่วนของน้ำในเนื้อเชื้อเพลิง (ไม้/หญ้า/ใบไม้)
+                เทียบกับน้ำหนักแห้ง<br>
+                ค่าต่ำ (เช่น 0.08) = เชื้อเพลิงแห้ง ไฟลามเร็ว | ค่าสูง (เช่น 0.30) = เชื้อเพลิงชื้น ไฟลามช้า<br>
+                ช่วงค่าที่ใช้: 3–30% (แปลงเป็น fraction 0.03–0.30)
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
+    <!-- ========== 4. CA SIMULATION ========== -->
+    <div class="section s-ca">
+        <h2><span class="step-num">4</span> การจำลอง Cellular Automata — 5 ขั้นเวลา</h2>
+
+        <div class="ts-wrap">
+            <div class="ts-visual">
+                <div class="ts-ring ts-ring-4"><span
+                        style="position:absolute; top:4px; left:50%; transform:translateX(-50%); font-size:10px; color:#facc15;">T4
+                        (ชม.ที่ 4)</span></div>
+                <div class="ts-ring ts-ring-3"><span
+                        style="position:absolute; top:4px; left:50%; transform:translateX(-50%); font-size:10px; color:#f59e0b;">T3</span>
+                </div>
+                <div class="ts-ring ts-ring-2"><span
+                        style="position:absolute; top:2px; left:50%; transform:translateX(-50%); font-size:10px; color:#fb923c;">T2</span>
+                </div>
+                <div class="ts-ring ts-ring-1"><span
+                        style="position:absolute; top:2px; left:50%; transform:translateX(-50%); font-size:9px; color:#ef4444;">T1</span>
+                </div>
+                <div class="ts-ring ts-ring-0"><span style="font-size:9px; color:#fff; font-weight:700;">T0</span>
+                </div>
+            </div>
+            <div style="flex:1; min-width:260px;">
+                <div class="item" style="margin-bottom:7px;">
+                    <div class="label">จำนวน Timesteps</div>
+                    <div class="val"><span class="hl-yellow">5 ขั้น</span> (T0–T4) = พยากรณ์ 4 ชั่วโมง</div>
+                    <div style="font-size:11px; color:#8892b0;">T0 = สถานะปัจจุบัน (ตำแหน่ง hotspot) | T1–T4 =
+                        พยากรณ์ล่วงหน้า</div>
+                </div>
+                <div class="item" style="margin-bottom:7px;">
+                    <div class="label">ระยะห่างระหว่างชั้น</div>
+                    <div class="val">= R เมตร/ชั่วโมง <small>(ตาม Rothermel)</small></div>
+                    <div style="font-size:11px; color:#8892b0; line-height:1.6;">
+                        ลมอ่อน + ชื้น → <span class="hl-green">~30–50 ม.</span> ต่อชั้น<br>
+                        ลมปานกลาง → <span class="hl-orange">~80–100 ม.</span> ต่อชั้น<br>
+                        ลมแรง + แห้ง → <span class="hl-red">~150+ ม.</span> ต่อชั้น
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="label">ความน่าจะเป็นการลาม (P<sub>spread</sub>)</div>
+                    <div class="val" style="font-family:'Courier New'; font-size:14px;">P = min(0.95, R / 11.25)
+                    </div>
+                    <div style="font-size:11px; color:#8892b0;">
+                        R=30 → P=0.27 (ลามช้า) | R=100 → P=0.89 (ลามปกติ) | R≥150 → P=0.95 (ลามเร็ว)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALL Modifiers -->
+        <h3 style="font-size:13px; color:#facc15; margin:14px 0 6px;">ตัวปรับค่าทั้งหมด (All Modifiers on
+            P<sub>spread</sub>)</h3>
+        <div style="overflow-x:auto;">
+            <table class="ptable">
+                <tr>
+                    <th>ตัวแปร</th>
+                    <th>สูตร / เงื่อนไข</th>
+                    <th>ช่วงค่า</th>
+                    <th>อธิบาย</th>
+                </tr>
+                <tr>
+                    <td style="color:#60a5fa;">ทิศทางลม</td>
+                    <td style="font-family:monospace; font-size:11px;">((1+cosθ)²)/4 × turb(0.6–1.4)</td>
+                    <td>0.15 – 1.4</td>
+                    <td>ใต้ลม = ลามเร็ว, เหนือลม = ช้า (ขั้นต่ำ 0.15)</td>
+                </tr>
+                <tr>
+                    <td style="color:#f87171;">FDI Factor</td>
+                    <td style="font-family:monospace; font-size:11px;">0.5 + FDI × 1.5</td>
+                    <td>0.5 – 2.0</td>
+                    <td>FDI=0 → ×0.5 (ลดครึ่ง) | FDI=1 → ×2.0 (เร็วเท่าตัว)</td>
+                </tr>
+                <tr>
+                    <td style="color:#86efac;">NBR Factor</td>
+                    <td style="font-family:monospace; font-size:11px;">NBR&lt;0: max(0.1, 1+NBR)<br>NBR≥0: 1 + NBR×0.5
+                    </td>
+                    <td>0.1 – 1.5</td>
+                    <td>NBR=-0.5 → ×0.5 (เพิ่งไหม้) | NBR=+0.5 → ×1.25 (พืชแน่น)</td>
+                </tr>
+                <tr>
+                    <td style="color:#c084fc;">ความชื้น &gt;90%</td>
+                    <td style="font-family:monospace; font-size:11px;">P = 0</td>
+                    <td>หยุดลาม</td>
+                    <td>ชื้นเกินขีด — ไฟดับทันที</td>
+                </tr>
+                <tr>
+                    <td style="color:#c084fc;">ความชื้น 85–90%</td>
+                    <td style="font-family:monospace; font-size:11px;">P × 0.2</td>
+                    <td>ลด 80%</td>
+                    <td>ลามช้ามากแต่ยังลามได้</td>
+                </tr>
+                <tr>
+                    <td style="color:#c084fc;">ชื้น &gt;70% + ลม &lt;2 m/s</td>
+                    <td style="font-family:monospace; font-size:11px;">P × max(0.4, 1-0.6×excess×deficit)</td>
+                    <td>0.4 – 1.0</td>
+                    <td>สภาพอากาศไม่เอื้อ (ชื้น+ลมอ่อน)</td>
+                </tr>
+                <tr>
+                    <td style="color:#fbbf24;">อุณหภูมิ &lt;15°C</td>
+                    <td style="font-family:monospace; font-size:11px;">P × 0.3</td>
+                    <td>ลด 70%</td>
+                    <td>อากาศเย็น — ไฟลามช้า</td>
+                </tr>
+                <tr>
+                    <td style="color:#fbbf24;">R ขั้นต่ำ</td>
+                    <td style="font-family:monospace; font-size:11px;">max(30, R)</td>
+                    <td>≥ 30 ม./ชม.</td>
+                    <td>Hotspot ที่ตรวจพบแล้วลามได้เสมอ</td>
+                </tr>
+                <tr>
+                    <td style="color:#fbbf24;">P สุดท้าย</td>
+                    <td style="font-family:monospace; font-size:11px;">clamp(0.0, 1.0)</td>
+                    <td>0.0 – 1.0</td>
+                    <td>จำกัดไว้ในช่วง probability ที่ถูกต้อง</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Barriers -->
+        <h3 style="font-size:13px; color:#facc15; margin:14px 0 6px;">สิ่งกีดขวาง (Barriers) — P = 0 ไฟไม่ลามผ่าน
+        </h3>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+            <span class="badge badge-water">แม่น้ำ (OSM + RID กรมชลประทาน)</span>
+            <span class="badge badge-water">อ่างเก็บน้ำ / ทะเลสาบ / บึง</span>
+            <span class="badge badge-urban">ชุมชน / เมือง (OSM)</span>
+            <span class="badge badge-urban">เขตอุตสาหกรรม / พาณิชย์</span>
+        </div>
+        <div class="note">
+            <b>ขั้น 1 (Cell-level):</b> เซลล์ที่ทับน้ำ/ชุมชน ≥ 20% → mark เป็น WATER/URBAN → P<sub>spread</sub> =
+            0<br>
+            <b>ขั้น 2 (Polygon clip):</b> Polygon สุดท้ายถูก clip ตัดออกจากผืนน้ำ (buffer 330 ม.) ไม่ให้ polygon
+            ยื่นเข้าแม่น้ำ<br>
+            <b>แหล่งข้อมูล:</b> OSM (59,298 polygons) + RID แม่น้ำสายหลัก (buffer 110–220 ม.)
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
+    <!-- ========== 5. RISK SCORE ========== -->
+    <div class="section s-risk">
+        <h2><span class="step-num">5</span> คะแนนความเสี่ยง (Risk Score)</h2>
+        <div class="formula-box" style="border-color:#a855f7;">
+            <div class="ftitle">สูตรคะแนนความเสี่ยง (Weighted Average)</div>
+            <div class="formula" style="font-size:14px;">Risk = FDI×0.30 + Wind×0.20 + Temp×0.15 + Humidity×0.15 +
+                Spread×0.20</div>
+            <div class="explain">
+                ค่าทุกตัวถูก normalize เป็น 0–1 ก่อนถ่วงน้ำหนัก
+            </div>
+        </div>
+        <div class="grid-2" style="margin-top:8px;">
+            <div>
+                <table class="ptable">
+                    <tr>
+                        <th>ตัวแปร</th>
+                        <th>การ Normalize</th>
+                        <th>น้ำหนัก</th>
+                    </tr>
+                    <tr>
+                        <td style="color:#f87171;">FDI</td>
+                        <td>ใช้ค่าตรง (0–1)</td>
+                        <td>30%</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#60a5fa;">ลม</td>
+                        <td>wind / 10.0</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#fbbf24;">อุณหภูมิ</td>
+                        <td>(T−15) / 25</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#86efac;">ความชื้น</td>
+                        <td>(100−RH) / 100</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#c084fc;">P<sub>spread</sub></td>
+                        <td>ค่าเฉลี่ย (0–1)</td>
+                        <td>20%</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <div class="item" style="margin-bottom:6px;">
+                    <div class="label">ระดับความเสี่ยง</div>
+                    <div style="font-size:13px; line-height:1.8;">
+                        <span style="color:#22c55e;">● &lt; 0.25 = ต่ำ</span><br>
+                        <span style="color:#facc15;">● 0.25–0.50 = ปานกลาง</span><br>
+                        <span style="color:#f97316;">● 0.50–0.75 = สูง</span><br>
+                        <span style="color:#ef4444;">● ≥ 0.75 = สูงมาก</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
+    <!-- ========== 6. OUTPUT ========== -->
+    <div class="section s-output">
+        <h2><span class="step-num">6</span> ผลลัพธ์ (Output)</h2>
+        <div class="grid-3">
+            <div class="item">
+                <div class="label">Polygon ไฟลาม</div>
+                <div class="val">5 ชั้น/คลัสเตอร์</div>
+                <div style="font-size:11px; color:#8892b0;">Union circles → Simplify (0.0005°) → Clip
+                    barriers<br>ตัด fragment &lt;5% ทิ้ง</div>
+            </div>
+            <div class="item">
+                <div class="label">ทิศทาง + ความเร็ว</div>
+                <div class="val">ลูกศรแสดงบนแผนที่</div>
+                <div style="font-size:11px; color:#8892b0;">awk(dy,dx) → compass direction<br>จำกัดสูงสุด 3,000
+                    ม./ชม.</div>
+            </div>
+            <div class="item">
+                <div class="label">พื้นที่เผาไหม้</div>
+                <div class="val">km² / ไร่</div>
+                <div style="font-size:11px; color:#8892b0;">= จำนวนเซลล์ที่ไหม้ × 375²<br>&gt;100 ha = สูง, &gt;50
+                    ha = กลาง</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
+    <!-- ========== 7. HOW IT WORKS ========== -->
+    <div class="section s-theory">
+        <h2><span class="step-num">★</span> หลักการทำงานของแบบจำลอง (Model Theory)</h2>
+        <p style="font-size:12px; color:#8892b0; margin-bottom:12px;">
+            ระบบนี้อาศัยแบบจำลองทางคณิตศาสตร์ 2 ชนิดทำงานบูรณาการร่วมกัน:
+            <b style="color:#ef4444;">Rothermel (1972)</b> สำหรับคำนวณ<em>อัตราการแพร่กระจาย</em>ของไฟ
+            และ <b style="color:#facc15;">Cellular Automata (CA)</b> สำหรับจำลอง<em>ขอบเขตเชิงพื้นที่</em>ของการลุกลาม
+        </p>
+
+        <!-- Rothermel -->
+        <div class="theory-block" style="border-color:#ef4444;">
+            <h4 style="color:#ef4444;">แบบจำลอง Rothermel (1972) — การคำนวณอัตราการแพร่กระจายของไฟ</h4>
+            <p>
+                แบบจำลองเชิงฟิสิกส์ที่พัฒนาโดย USDA Forest Service ได้รับการยอมรับ
+                และใช้งานอย่างแพร่หลายในระดับสากลมากว่า 50 ปี
+                โดยคำนวณค่า <b style="color:#fb923c;">R (Rate of Spread)</b> จากปัจจัยหลัก 3 ประการ:
+            </p>
+            <ul>
+                <li><b style="color:#f87171;">คุณสมบัติเชื้อเพลิง</b> — ความชื้นต่ำส่งผลให้เกิดปฏิกิริยาเผาไหม้รุนแรง
+                    ในขณะที่ความชื้นสูงทำหน้าที่เป็นตัวหน่วง
+                    (ค่าความชื้น M<sub>f</sub> คำนวณจากสมการ Simard, 1968)</li>
+                <li><b style="color:#60a5fa;">ความเร็วและทิศทางลม</b> — ความเร็วลมเพิ่มค่าสัมประสิทธิ์ลม
+                    (φ<sub>W</sub>) ซึ่งเร่งอัตราการแพร่กระจาย</li>
+                <li><b style="color:#86efac;">ลักษณะภูมิประเทศ</b> — ความลาดชันเพิ่มค่าสัมประสิทธิ์ลาดชัน
+                    (φ<sub>S</sub>) เนื่องจากไฟลุกลามขึ้นเนินได้เร็วกว่า</li>
+            </ul>
+            <p style="margin-top:8px;">สมการอัตราการแพร่กระจาย:</p>
+            <div
+                style="font-family:'Courier New',monospace; font-size:13px; color:#fff; background:rgba(0,0,0,0.3); padding:10px 14px; border-radius:8px; margin:6px 0;">
+                R = <span style="color:#f87171;">I<sub>R</sub> × ξ × (1 + φ<sub>W</sub> +
+                    φ<sub>S</sub>)</span>
+                / <span style="color:#60a5fa;">ρ<sub>b</sub> × ε × Q<sub>ig</sub></span>
+            </div>
+            <p style="margin-top:6px; font-size:11px;">
+                <b>ตัวเศษ (Numerator):</b> ความเข้มปฏิกิริยา (I<sub>R</sub>), สัดส่วนฟลักซ์แผ่ (ξ),
+                ผลรวมสัมประสิทธิ์ลมและลาดชัน — ค่าสูง หมายถึง อัตราการลามสูง<br>
+                <b>ตัวส่วน (Denominator):</b> ความหนาแน่นรวมเชื้อเพลิง (ρ<sub>b</sub>),
+                ความร้อนจุดติดไฟ (Q<sub>ig</sub>) — ค่าสูง หมายถึง ต้องการพลังงานมากขึ้นในการจุดเชื้อเพลิง<br>
+                <b>ผลลัพธ์ R</b> = อัตราการแพร่กระจาย (เมตร/ชั่วโมง) กำหนดค่าขั้นต่ำ = <span style="color:#fb923c;">30
+                    ม./ชม.</span>
+            </p>
+        </div>
+
+        <!-- CA -->
+        <div class="theory-block" style="border-color:#facc15;">
+            <h4 style="color:#facc15;">แบบจำลอง Cellular Automata (CA) — การจำลองการแพร่กระจายของไฟเชิงพื้นที่</h4>
+            <p>
+                Cellular Automata เป็นแบบจำลองเชิงพื้นที่แบบไม่ต่อเนื่อง (Discrete Spatial Model)
+                ที่แบ่งพื้นที่ศึกษาออกเป็น<b>ตารางกริด (Grid)</b> ขนาดเซลล์ละ 375 × 375 เมตร
+                (สอดคล้องกับความละเอียดของ VIIRS Hotspot)
+                โดยแต่ละเซลล์มีค่าสถานะ (State) ซึ่งเปลี่ยนแปลงตามกฎการเปลี่ยนสถานะที่กำหนดไว้:
+            </p>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; margin:8px 0;">
+                <span style="color:#22c55e; font-size:13px; font-weight:600;">● UNBURNED (0) —
+                    ยังไม่เกิดการเผาไหม้</span>
+                <span style="color:#ef4444; font-size:13px; font-weight:600;">● BURNING (1) —
+                    อยู่ระหว่างการเผาไหม้</span>
+                <span style="color:#6b7394; font-size:13px; font-weight:600;">● BURNED (2) — สิ้นสุดการเผาไหม้</span>
+            </div>
+
+            <p style="margin-top:10px; font-size:11px; color:#8892b0;">
+                <b>พารามิเตอร์กริด:</b>
+                ขนาดเซลล์ = 375 ม. (≈ 0.00337°) |
+                เซลล์ข้างเคียง = 8 ทิศทาง (≤ 562.5 ม.) |
+                จำนวนเซลล์สูงสุด = 3,000 เซลล์/คลัสเตอร์ |
+                จำนวนขั้นเวลา = 5 (T0–T4)
+            </p>
+
+            <p style="margin-top:10px;"><b>กฎการเปลี่ยนสถานะ (Transition Rules) — ต่อ 1 ขั้นเวลา (Δt = 1 ชั่วโมง):</b>
+            </p>
+
+            <!-- Visual mini-flowchart -->
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0; margin:10px 0;">
+
+                <!-- Step 0: Entry -->
+                <div
+                    style="background:rgba(239,68,68,0.10); border:1px solid rgba(239,68,68,0.3); border-radius:10px; padding:10px 16px; max-width:420px; width:100%; text-align:center;">
+                    <div style="font-size:12px; font-weight:700; color:#ef4444;">FOR แต่ละเซลล์ C<sub>i</sub> ที่มีสถานะ
+                        BURNING</div>
+                </div>
+
+                <!-- Branch split -->
+                <div class="ca-branch-container" style="display:flex; width:100%; max-width:540px; margin-top:0;">
+                    <!-- Left branch: Step 1 -->
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                        <div class="fc-arrow" style="height:24px;">
+                            <div class="fc-arrow-line"></div>
+                            <div class="fc-arrow-head">▼</div>
+                        </div>
+                        <div
+                            style="font-size:10px; color:#facc15; font-weight:700; letter-spacing:0.5px; margin-bottom:4px;">
+                            ขั้นตอนที่ 1</div>
+                        <div
+                            style="background:rgba(250,204,21,0.07); border:1px solid rgba(250,204,21,0.2); border-radius:10px; padding:10px 14px; width:100%; max-width:250px;">
+                            <div style="font-size:11px; font-weight:700; color:#facc15; margin-bottom:6px;">
+                                ประเมินการแพร่กระจาย</div>
+                            <div style="font-size:10px; color:#b0b8d0; line-height:1.7;">
+                                FOR N<sub>j</sub> ∈ Moore(8 ทิศ)<br>
+                                &nbsp;&nbsp;IF state(N<sub>j</sub>) = <span style="color:#22c55e;">UNBURNED</span>:
+                            </div>
+                            <!-- P_spread calc -->
+                            <div
+                                style="background:rgba(0,0,0,0.3); border-radius:6px; padding:6px 8px; margin:6px 0; font-family:'Courier New',monospace; font-size:10px; color:#e2e8f0; line-height:1.6;">
+                                P<sub>spread</sub> = <span style="color:#ef4444;">R(Rothermel)</span><br>
+                                &nbsp;&nbsp;× D<sub>wind</sub> × F<sub>FDI</sub><br>
+                                &nbsp;&nbsp;× F<sub>NBR</sub> × F<sub>damp</sub>
+                            </div>
+                            <!-- Decision -->
+                            <div
+                                style="background:rgba(167,139,250,0.10); border:1px solid rgba(167,139,250,0.25); border-radius:6px; padding:6px 8px; margin:4px 0; text-align:center;">
+                                <div style="font-size:10px; color:#a78bfa; font-weight:600;">u ~ Uniform(0, 1)</div>
+                                <div style="font-size:9px; color:#8892b0; margin-top:2px; font-style:italic;">
+                                    สุ่มค่า u จากการแจกแจงสม่ำเสมอ (Uniform Distribution)<br>
+                                    ในช่วง [0, 1) เพื่อใช้เป็นกลไก Stochastic ตัดสินการลุกลาม
+                                </div>
+                                <div style="font-size:10px; color:#c8cfe0; margin-top:4px;">
+                                    u &lt; P<sub>spread</sub> ?
+                                </div>
+                                <div style="display:flex; justify-content:center; gap:12px; margin-top:4px;">
+                                    <span style="font-size:10px; color:#22c55e; font-weight:600;">Yes → BURNING</span>
+                                    <span style="font-size:10px; color:#f87171; font-weight:600;">No → คงเดิม</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right branch: Step 2 -->
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                        <div class="fc-arrow" style="height:24px;">
+                            <div class="fc-arrow-line"></div>
+                            <div class="fc-arrow-head">▼</div>
+                        </div>
+                        <div
+                            style="font-size:10px; color:#fb923c; font-weight:700; letter-spacing:0.5px; margin-bottom:4px;">
+                            ขั้นตอนที่ 2</div>
+                        <div
+                            style="background:rgba(251,146,60,0.07); border:1px solid rgba(251,146,60,0.2); border-radius:10px; padding:10px 14px; width:100%; max-width:250px;">
+                            <div style="font-size:11px; font-weight:700; color:#fb923c; margin-bottom:6px;">
+                                ตรวจสอบระยะเวลาเผาไหม้</div>
+                            <div style="font-size:10px; color:#b0b8d0; line-height:1.7;">
+                                เพิ่มระยะเวลาเผาไหม้สะสม:
+                            </div>
+                            <div
+                                style="background:rgba(0,0,0,0.3); border-radius:6px; padding:6px 8px; margin:6px 0; font-family:'Courier New',monospace; font-size:10px; color:#e2e8f0; line-height:1.6;">
+                                t<sub>burn</sub>(C<sub>i</sub>) += Δt
+                            </div>
+                            <div
+                                style="font-size:9px; color:#8892b0; margin-top:1px; font-style:italic; line-height:1.5;">
+                                Δt = ช่วงเวลาต่อ 1 ขั้น = <b>1.0 ชั่วโมง</b><br>
+                                เพิ่มระยะเวลาเผาไหม้สะสมทีละ 1 ชั่วโมงต่อขั้น
+                            </div>
+                            <div
+                                style="background:rgba(0,0,0,0.3); border-radius:6px; padding:6px 8px; margin:6px 0; font-family:'Courier New',monospace; font-size:10px; color:#e2e8f0; line-height:1.6;">
+                                t<sub>r</sub> = δ / R
+                            </div>
+                            <!-- Decision -->
+                            <div
+                                style="background:rgba(107,115,148,0.15); border:1px solid rgba(107,115,148,0.3); border-radius:6px; padding:6px 8px; margin:4px 0; text-align:center;">
+                                <div style="font-size:10px; color:#c8cfe0;">
+                                    t<sub>burn</sub> ≥ t<sub>r</sub> ?
+                                </div>
+                                <div style="display:flex; justify-content:center; gap:12px; margin-top:4px;">
+                                    <span style="font-size:10px; color:#6b7394; font-weight:600;">Yes → BURNED</span>
+                                    <span style="font-size:10px; color:#ef4444; font-weight:600;">No → ยังคง
+                                        BURNING</span>
+                                </div>
+                            </div>
+                            <div style="font-size:9px; color:#8892b0; margin-top:6px; line-height:1.5;">
+                                <b>t<sub>r</sub></b> (Residence Time):<br>
+                                ทุ่งหญ้า 1–4 ชม. | ป่า 3–12 ชม. | เกษตร 2–8 ชม.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameter definitions table -->
+            <p style="margin-top:12px;"><b>นิยามพารามิเตอร์ (Parameter Definitions):</b></p>
+            <div style="overflow-x:auto;">
+                <table class="ptable" style="margin-top:6px;">
+                    <tr>
+                        <th style="width:120px;">สัญลักษณ์</th>
+                        <th>ความหมาย</th>
+                        <th style="width:160px;">ค่า / ช่วง</th>
+                    </tr>
+                    <tr>
+                        <td style="color:#facc15;">C<sub>i</sub></td>
+                        <td>เซลล์ต้นทางที่อยู่ระหว่างการเผาไหม้ (Source Cell)</td>
+                        <td>state = BURNING</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#22c55e;">N<sub>j</sub></td>
+                        <td>เซลล์ข้างเคียงใน Moore Neighborhood — เซลล์ที่อยู่ติดกันทั้ง 8 ทิศทาง (บน, ล่าง, ซ้าย, ขวา,
+                            และ 4 มุมทแยง)</td>
+                        <td>j = 1, ..., 8</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#ef4444;">Rothermel(R)</td>
+                        <td>ค่าฐานของความน่าจะเป็น คำนวณจากอัตราการแพร่กระจาย R ที่ได้จากแบบจำลอง Rothermel</td>
+                        <td><span style="font-family:'Courier New',monospace;">min(0.95, R / 11.25)</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#60a5fa;">D<sub>wind</sub></td>
+                        <td><b>Direction Factor</b> — สัมประสิทธิ์ทิศทางลม ไฟที่ลามไปในทิศทางตามลม (Downwind) มีค่าสูง
+                            ส่วนทวนลม (Upwind) มีค่าต่ำ คำนวณจาก ((1+cos θ)²/4) × ค่าความปั่นป่วน (Turbulence 0.6–1.4)
+                            กำหนดค่าขั้นต่ำ 0.15 เพื่อให้ไฟสามารถลุกลามแบบ flanking ได้</td>
+                        <td>0.15 – 1.0</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#f87171;">F<sub>FDI</sub></td>
+                        <td><b>Fire Danger Index Factor</b> — ดัชนีอันตรายไฟจากข้อมูลดาวเทียม
+                            ค่าต่ำ = สภาพไม่เอื้อต่อการลุกลาม, ค่าสูง = สภาพเอื้ออำนวย</td>
+                        <td><span style="font-family:'Courier New',monospace;">0.5 + FDI × 1.5</span><br>ช่วง: 0.5 – 2.0
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:#86efac;">F<sub>NBR</sub></td>
+                        <td><b>Normalized Burn Ratio Factor</b> — ดัชนีพื้นที่เผาไหม้จากดาวเทียม
+                            NBR &lt; 0 = พื้นที่เพิ่งถูกเผา (ลามช้า), NBR &gt; 0 = พืชพรรณสมบูรณ์ (มีเชื้อเพลิง)</td>
+                        <td>NBR&lt;0: <span style="font-family:'Courier New',monospace;">max(0.1, 1+NBR)</span><br>
+                            NBR≥0: <span style="font-family:'Courier New',monospace;">1 + NBR×0.5</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#c084fc;">F<sub>damp</sub></td>
+                        <td><b>Dampening Factor (ตัวลดทอน)</b> — ปัจจัยชะลอการลุกลามเมื่อสภาพอากาศไม่เอื้ออำนวย
+                            ประกอบด้วย:<br>
+                            • RH &gt; 90% → P = 0 (ไฟไม่ลุกลาม)<br>
+                            • RH 85–90% → คูณ 0.2<br>
+                            • RH &gt; 70% และลม &lt; 2 m/s → คูณ 0.4–1.0<br>
+                            • อุณหภูมิ &lt; 15°C → คูณ 0.3</td>
+                        <td>0.0 – 1.0</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#a78bfa;">u</td>
+                        <td>ตัวแปรสุ่มจากการแจกแจงสม่ำเสมอ (Uniform Distribution) ใช้เป็นกลไก Stochastic
+                            ในการตัดสินว่าไฟลุกลามสำเร็จหรือไม่</td>
+                        <td>u ~ Uniform[0, 1)</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#fbbf24;">t<sub>burn</sub></td>
+                        <td>ระยะเวลาสะสมที่เซลล์อยู่ในสถานะ BURNING เพิ่มขึ้น Δt ต่อขั้นเวลา</td>
+                        <td>Δt = 1.0 ชั่วโมง</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#fb923c;">t<sub>r</sub></td>
+                        <td><b>Residence Time</b> — ระยะเวลาที่เชื้อเพลิงไหม้จนหมด คำนวณจาก δ (ความลึกเชื้อเพลิง)
+                            หารด้วย R (อัตราการแพร่กระจาย) อ้างอิง Rothermel (1972) และ Byram (1959)</td>
+                        <td>ทุ่งหญ้า: 1–4 ชม.<br>ป่าไม้: 3–12 ชม.<br>เกษตร: 2–8 ชม.</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#38bdf8;">δ</td>
+                        <td>ความลึกชั้นเชื้อเพลิง (Fuel Bed Depth) กำหนดจาก Fuel Model มาตรฐาน Anderson (1982)</td>
+                        <td>แตกต่างตามประเภทเชื้อเพลิง</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- How they work together -->
+        <div class="divider"></div>
+        <h3 style="font-size:14px; color:#a78bfa; margin:10px 0 8px; font-weight:700;">ผังการทำงานแบบบูรณาการ
+            (Integrated Workflow)</h3>
+
+        <div class="flowchart">
+            <!-- Node 1: Input -->
+            <div class="fc-node fc-input">
+                <div class="fc-node-header">
+                    <div class="fc-node-icon">1</div>
+                    <div class="fc-node-title">ข้อมูลนำเข้า (Input Data)</div>
+                </div>
+                <div class="fc-node-body">
+                    <span class="fc-tag">T</span> อุณหภูมิ
+                    <span class="fc-tag">RH</span> ความชื้นสัมพัทธ์
+                    <span class="fc-tag">U</span> ความเร็วและทิศทางลม<br>
+                    <span class="fc-tag">Slope</span> ความลาดชัน
+                    <span class="fc-tag">FDI</span> ดัชนีอันตรายไฟ
+                    <span class="fc-tag">NBR</span> ดัชนีพื้นที่เผาไหม้
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="fc-arrow">
+                <div class="fc-arrow-line"></div>
+                <div class="fc-arrow-head">▼</div>
+            </div>
+
+            <!-- Node 2: Simard -->
+            <div class="fc-node" style="background:rgba(251,146,60,0.07); border:1px solid rgba(251,146,60,0.25);">
+                <div class="fc-node-header">
+                    <div class="fc-node-icon" style="background:#fb923c; color:#0c1024;">2</div>
+                    <div class="fc-node-title" style="color:#fb923c;">Simard Equation (1968)</div>
+                </div>
+                <div class="fc-node-body">
+                    แปลงสภาพอากาศ (T, RH) เป็นค่า <b>M<sub>f</sub></b> (Fuel Moisture Content — ค่าความชื้นเชื้อเพลิง)
+                    <div style="font-size:9px; color:#8892b0; margin:4px 0; font-style:italic; line-height:1.5;">
+                        M<sub>f</sub> = สัดส่วนของน้ำในเนื้อเชื้อเพลิง (ไม้/หญ้า/ใบไม้) เทียบกับน้ำหนักแห้ง<br>
+                        ค่าต่ำ = แห้ง (ไฟลามเร็ว) | ค่าสูง = ชื้น (ไฟลามช้า) | ช่วง 3–30%
+                    </div>
+                    <div class="fc-formula-box">
+                        M<sub>f</sub> = f(T, RH) → η<sub>M</sub> (ตัวหน่วงความชื้น) + Q<sub>ig</sub>
+                        (ความร้อนจุดติดไฟ)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="fc-arrow">
+                <div class="fc-arrow-line"></div>
+                <div class="fc-arrow-head">▼</div>
+            </div>
+
+            <!-- Node 3: Rothermel -->
+            <div class="fc-node fc-rothermel">
+                <div class="fc-node-header">
+                    <div class="fc-node-icon">3</div>
+                    <div class="fc-node-title">Rothermel Fire Spread Model (1972)</div>
+                </div>
+                <div class="fc-node-body">
+                    คำนวณอัตราการแพร่กระจาย (R) จากปัจจัยทั้งหมด
+                    <div class="fc-formula-box">
+                        R = I<sub>R</sub> × ξ × (1 + φ<sub>W</sub> + φ<sub>S</sub>) / (ρ<sub>b</sub> × ε ×
+                        Q<sub>ig</sub>)
+                    </div>
+                    <div style="margin-top:4px;">
+                        ผลลัพธ์: <b style="color:#ef4444;">R</b> (เมตร/ชั่วโมง)
+                        → แปลงเป็นความน่าจะเป็น
+                        <span class="fc-tag">P<sub>spread</sub> = min(0.95, R / 11.25)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="fc-arrow">
+                <div class="fc-arrow-line"></div>
+                <div class="fc-arrow-head">▼</div>
+            </div>
+
+            <!-- Node 4: CA -->
+            <div class="fc-node fc-ca">
+                <div class="fc-node-header">
+                    <div class="fc-node-icon">4</div>
+                    <div class="fc-node-title">CA Simulation (Cellular Automata)</div>
+                </div>
+                <div class="fc-node-body">
+                    จำลองการแพร่กระจายบนกริดเซลล์ 375 ม. จำนวน 5 ขั้นเวลา
+                    <div style="display:flex; gap:6px; margin:8px 0 4px; flex-wrap:wrap;">
+                        <span
+                            style="background:rgba(250,204,21,0.15); color:#facc15; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;">T0
+                            ตำแหน่งจริง</span>
+                        <span
+                            style="background:rgba(250,204,21,0.10); color:#fbbf24; padding:3px 10px; border-radius:20px; font-size:11px;">T1</span>
+                        <span
+                            style="background:rgba(250,204,21,0.10); color:#fbbf24; padding:3px 10px; border-radius:20px; font-size:11px;">T2</span>
+                        <span
+                            style="background:rgba(250,204,21,0.10); color:#fbbf24; padding:3px 10px; border-radius:20px; font-size:11px;">T3</span>
+                        <span
+                            style="background:rgba(250,204,21,0.15); color:#facc15; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;">T4
+                            พยากรณ์</span>
+                    </div>
+                    <div style="margin-top:2px;">
+                        แต่ละขั้นเวลา: เซลล์ที่มีสถานะ BURNING พยายามลุกลามไปยังเซลล์ข้างเคียง<br>
+                        ด้วยค่า P<sub>spread</sub> ที่ปรับด้วย
+                        <span class="fc-tag">FDI</span>
+                        <span class="fc-tag">NBR</span>
+                        <span class="fc-tag">Wind Direction</span>
+                        <span class="fc-tag">Turbulence</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="fc-arrow">
+                <div class="fc-arrow-line"></div>
+                <div class="fc-arrow-head">▼</div>
+            </div>
+
+            <!-- Node 5: Output -->
+            <div class="fc-node fc-output">
+                <div class="fc-node-header">
+                    <div class="fc-node-icon">5</div>
+                    <div class="fc-node-title">ผลลัพธ์การพยากรณ์ (Prediction Output)</div>
+                </div>
+                <div class="fc-node-body">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:2px;">
+                        <div>
+                            <div style="color:#22c55e; font-weight:600; font-size:11px;">Polygon</div>
+                            <div style="font-size:10px;">ขอบเขตการลุกลาม 5 ชั้น</div>
+                        </div>
+                        <div>
+                            <div style="color:#22c55e; font-weight:600; font-size:11px;">ทิศทาง + ความเร็ว</div>
+                            <div style="font-size:10px;">เวกเตอร์การแพร่กระจาย</div>
+                        </div>
+                        <div>
+                            <div style="color:#22c55e; font-weight:600; font-size:11px;">Risk Score</div>
+                            <div style="font-size:10px;">ระดับความเสี่ยง 4 ขั้น</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples -->
+        <h3 style="font-size:14px; color:#a78bfa; margin:14px 0 8px; font-weight:700;">กรณีศึกษาเปรียบเทียบ</h3>
+        <div class="grid-2">
+            <div class="example-box">
+                <div class="ex-title" style="color:#ef4444;">กรณีที่ 1: สภาพอากาศร้อนแห้ง ลมแรง</div>
+                <div class="ex-detail">
+                    อุณหภูมิ <b>37°C</b> | ความชื้นสัมพัทธ์ <b>30%</b> | ลม <b>5 m/s</b><br>
+                    → M<sub>f</sub> ≈ <span style="color:#ef4444;">0.08</span> (เชื้อเพลิงมีความชื้นต่ำ)<br>
+                    <span style="font-size:10px; color:#8892b0; padding-left:14px;">
+                        Simard: RH<50% → 0.03229 + 0.281073×30 − 0.000578×30×37 ≈ 8% → M<sub>f</sub> = 0.08
+                    </span><br>
+                    → R ≈ <span style="color:#ef4444;">150 เมตร/ชั่วโมง</span><br>
+                    <span style="font-size:10px; color:#8892b0; padding-left:14px;">
+                        Rothermel: R = (I<sub>R</sub> × ξ × (1 + φ<sub>W</sub> + φ<sub>S</sub>)) / (ρ<sub>b</sub> × ε ×
+                        Q<sub>ig</sub>)<br>
+                        <span style="padding-left:14px;">M<sub>f</sub>=0.08 ต่ำ → η<sub>M</sub> ≈ 0.85
+                            (เชื้อเพลิงพร้อมเผาไหม้) → I<sub>R</sub> สูง</span><br>
+                        <span style="padding-left:14px;">ลม 5 m/s → φ<sub>W</sub> สูง (ลมเร่งความเร็วไฟ)</span><br>
+                        <span style="padding-left:14px;">Q<sub>ig</sub> = 250 + 1116×0.08 = 339 kJ/kg
+                            (ใช้ความร้อนจุดติดน้อย)</span>
+                    </span><br>
+                    → P<sub>spread</sub> ≈ <span style="color:#ef4444;">0.95</span> (อัตราการลุกลามสูง)<br>
+                    <span style="font-size:10px; color:#8892b0; padding-left:14px;">
+                        min(0.95, 150/11.25) = min(0.95, 13.3) = 0.95 (ถูกจำกัดที่ค่าสูงสุด)
+                    </span><br>
+                    → CA: ขอบเขตไฟขยายประมาณ <b>1.5–2.2 กม.</b> ภายใน 4 ชั่วโมง
+                </div>
+            </div>
+            <div class="example-box">
+                <div class="ex-title" style="color:#22c55e;">กรณีที่ 2: สภาพอากาศชื้น ลมอ่อน</div>
+                <div class="ex-detail">
+                    อุณหภูมิ <b>25°C</b> | ความชื้นสัมพัทธ์ <b>85%</b> | ลม <b>1 m/s</b><br>
+                    → M<sub>f</sub> ≈ <span style="color:#22c55e;">0.15</span> (เชื้อเพลิงมีความชื้นค่อนข้างสูง)<br>
+                    <span style="font-size:10px; color:#8892b0; padding-left:14px;">
+                        Simard: RH≥50% → 2.22749 + 0.160107×85 − 0.01478×25 ≈ 15.5% → M<sub>f</sub> = 0.155
+                    </span><br>
+                    → R ≈ <span style="color:#22c55e;">30 เมตร/ชั่วโมง</span> (ค่าขั้นต่ำ)<br>
+                    <span style="font-size:10px; color:#8892b0; padding-left:14px;">
+                        Rothermel: M<sub>f</sub> สูง + ลมอ่อน → η<sub>M</sub> ต่ำ + φ<sub>W</sub> น้อย → R ต่ำกว่า 30 →
+                        ถูกดันขึ้นเป็น MIN_SPREAD_RATE = 30
+                    </span><br>
+                    → P<sub>spread</sub> ≈ <span style="color:#22c55e;">0.054</span> (อัตราการลุกลามต่ำมาก)<br>
+                    <span style="font-size:10px; color:#8892b0; padding-left:14px;">
+                        min(0.95, 30/11.25) = 0.27 แต่ถูกลดทอน:<br>
+                        <span style="padding-left:14px;">× humidity_dampening (RH 85–90%) = ×0.2 → 0.054</span><br>
+                        <span style="padding-left:14px;">ยิ่งถูก weather_dampening ด้วย (RH>70% + ลม<2 m/s)</span>
+                        </span><br>
+                        → CA: ขอบเขตไฟขยายเพียง <b>0–1 เซลล์</b> ภายใน 4 ชั่วโมง
+                </div>
+            </div>
+        </div>
+
+        <div class="note" style="margin-top:12px;">
+            <b>สรุปหลักการ:</b> แบบจำลอง Rothermel ทำหน้าที่คำนวณอัตราการแพร่กระจายของไฟ (R)
+            จากนั้นแบบจำลอง Cellular Automata นำค่าดังกล่าวไปใช้ในการจำลองการลุกลามเชิงพื้นที่บนกริดเซลล์
+            เพื่อประมาณขอบเขตพื้นที่ที่อาจได้รับผลกระทบในแต่ละช่วงเวลา
+        </div>
+    </div>
+
+    <div class="footer">
+        ระบบพยากรณ์การลามของไฟป่า — ภาคเหนือตอนบน 8 จังหวัด<br>
+        อ้างอิง: Rothermel, R.C. (1972) "A Mathematical Model for Predicting Fire Spread in Wildland Fuels" USDA
+        Forest Service INT-115 (PB210095)<br>
+        ปรับ M<sub>x</sub> สำหรับเขตร้อนชื้น | อัพเดตอัตโนมัติทุก 1 ชั่วโมง
+    </div>
+
+    </div>
+</body>
+
+</html>
