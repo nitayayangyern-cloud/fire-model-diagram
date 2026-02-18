@@ -853,12 +853,14 @@
                     <div class="val">Open-Meteo API</div>
                     <div style="font-size:11px; color:#8892b0;">อัพเดตทุก 1 ชม.<br>อุณหภูมิ, ความชื้น, ลม</div>
                 </div>
-                <div class="label">ภูมิประเทศ (Terrain)</div>
-                <div class="val">PostGIS + DEM (SRTM)</div>
-                <div style="font-size:11px; color:#8892b0;">
-                    <b>Slope:</b> ความลาดชัน (ใช้คำนวณความเร็ว)<br>
-                    <b>Aspect:</b> ทิศความลาดชัน (ใช้ปรับทิศทางลม)<br>
-                    <b>Land Use:</b> สิ่งกีดขวาง (น้ำ/ชุมชน)
+                <div class="item">
+                    <div class="label">ภูมิประเทศ (Terrain)</div>
+                    <div class="val">PostGIS + DEM (SRTM)</div>
+                    <div style="font-size:11px; color:#8892b0;">
+                        <b>Slope:</b> ความลาดชัน (ใช้คำนวณความเร็ว)<br>
+                        <b>Aspect:</b> ทิศความลาดชัน (ใช้ปรับทิศทางลม)<br>
+                        <b>Land Use:</b> สิ่งกีดขวาง (น้ำ/ชุมชน)
+                    </div>
                 </div>
             </div>
         </div>
@@ -1227,6 +1229,29 @@
                 <div class="val">km² / ไร่</div>
                 <div style="font-size:11px; color:#8892b0;">= จำนวนเซลล์ที่ไหม้ × 375²<br>&gt;100 ha = สูง, &gt;50
                     ha = กลาง</div>
+            </div>
+        </div>
+
+        <!-- Hotspot Visualization -->
+        <h3 style="font-size:13px; color:#22c55e; margin:14px 0 6px;">การแสดงจุดความร้อนบนแผนที่</h3>
+        <div class="grid-2">
+            <div class="item">
+                <div class="label">จุดสีส้ม — กำลังลุกลาม (Spreading)</div>
+                <div class="val" style="color:#fb923c;">จุดที่มีการลุกลามจริง</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px; line-height:1.7;">
+                    เงื่อนไข: มี prediction + อยู่ภายใน <span class="hl-orange">~5 กม.</span> จากศูนย์กลางคลัสเตอร์<br>
+                    + คลัสเตอร์มีเซลล์ลามสำเร็จ ≥ <span class="hl-orange">5 เซลล์</span> (MIN_SPREAD_CELLS)<br>
+                    แสดงเป็นจุดสีส้มพร้อม Polygon พื้นที่การลุกลาม
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">จุดสีแดง — ไม่พบการลุกลาม (Non-spreading)</div>
+                <div class="val" style="color:#ef4444;">จุดความร้อนทั่วไป</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px; line-height:1.7;">
+                    จุดความร้อนที่ไม่ผ่านเกณฑ์การลุกลาม<br>
+                    แสดงข้อมูล: ที่ตั้ง, พิกัด, วันที่/เวลา, ดาวเทียม, ความเชื่อมั่น<br>
+                    + สภาพอากาศ (อุณหภูมิ/ความชื้น/ลม) จากคลัสเตอร์ใกล้เคียง
+                </div>
             </div>
         </div>
     </div>
