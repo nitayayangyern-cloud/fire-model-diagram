@@ -1254,6 +1254,63 @@
                 </div>
             </div>
         </div>
+
+        <!-- Map Overlay Layers -->
+        <h3 style="font-size:13px; color:#60a5fa; margin:14px 0 6px;">ชั้นข้อมูลบนแผนที่ (Map Overlay Layers)</h3>
+        <div class="grid-3">
+            <div class="item">
+                <div class="label">ขอบเขตจังหวัด</div>
+                <div class="val" style="color:#a78bfa;">8 จังหวัดภาคเหนือ</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px; line-height:1.7;">
+                    แหล่งข้อมูล: <code style="color:#60a5fa;">provinces.geojson</code><br>
+                    เชียงใหม่ · เชียงราย · ลำปาง · ลำพูน<br>
+                    แม่ฮ่องสอน · น่าน · พะเยา · แพร่<br>
+                    <span class="hl-cyan">แต่ละจังหวัดมีสีเฉพาะ เปิด/ปิดได้</span>
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">ถนน/แนวกันไฟ (Roads)</div>
+                <div class="val" style="color:#fbbf24;">ทางหลวงแผ่นดิน 221 เส้น</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px; line-height:1.7;">
+                    แหล่งข้อมูล: <code style="color:#60a5fa;">roads_major.geojson</code><br>
+                    ข้อมูล: กรมทางหลวง (PostGIS)<br>
+                    แสดงเส้นประสีเหลือง พร้อม tooltip ชื่อถนน<br>
+                    <span class="hl-cyan">ใช้เป็น reference แนวกันไฟธรรมชาติ</span>
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">แผนที่ฐาน (Base Maps)</div>
+                <div class="val" style="color:#86efac;">4 รูปแบบ</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px; line-height:1.7;">
+                    <b>Light Map</b> — CartoDB Positron<br>
+                    <b>Satellite</b> — Esri World Imagery<br>
+                    <b>Street Map</b> — OpenStreetMap<br>
+                    <b>Topographic</b> — OpenTopoMap
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment -->
+        <h3 style="font-size:13px; color:#c084fc; margin:14px 0 6px;">การ Deploy (Web Deployment)</h3>
+        <div class="grid-2">
+            <div class="item">
+                <div class="label">Platform</div>
+                <div class="val" style="color:#c084fc;">Vercel</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px;">
+                    Auto-deploy จาก GitHub (main branch)<br>
+                    URL: <code style="color:#60a5fa;">fire-prediction-web.vercel.app</code>
+                </div>
+            </div>
+            <div class="item">
+                <div class="label">Tech Stack</div>
+                <div class="val" style="color:#c084fc;">HTML + JS + Leaflet</div>
+                <div style="font-size:11px; color:#8892b0; margin-top:4px;">
+                    Single page — ไม่มี framework<br>
+                    Leaflet.js (แผนที่) + Chart.js (กราฟ)<br>
+                    Font: Inter (Google Fonts)
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="flow-arrow">▼</div>
