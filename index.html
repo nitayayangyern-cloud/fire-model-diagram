@@ -1046,25 +1046,25 @@
                 </tr>
                 <tr>
                     <td style="color:#16a34a;">GRASSLAND (ทุ่งหญ้า)</td>
-                    <td>11,483</td>
-                    <td>0.76</td>
-                    <td>12%</td>
+                    <td>3,500</td>
+                    <td>0.30</td>
+                    <td>25%</td>
                     <td>1–4 ชม.</td>
                     <td>ทุ่งหญ้า, ไร่ร้าง</td>
                 </tr>
                 <tr>
                     <td style="color:#15803d;">FOREST (ป่าไม้)</td>
-                    <td>6,562</td>
-                    <td>0.61</td>
-                    <td>25%</td>
+                    <td>1,739</td>
+                    <td>0.30</td>
+                    <td>30%</td>
                     <td>3–12 ชม.</td>
                     <td>ป่าเต็งรัง, ป่าเบญจพรรณ</td>
                 </tr>
                 <tr>
                     <td style="color:#92400e;">AGRICULTURAL (เกษตร)</td>
-                    <td>8,202</td>
-                    <td>0.46</td>
-                    <td>15%</td>
+                    <td>1,500</td>
+                    <td>0.76</td>
+                    <td>30%</td>
                     <td>2–8 ชม.</td>
                     <td>นาข้าว, ไร่ข้าวโพด</td>
                 </tr>
@@ -1083,10 +1083,10 @@
             </table>
         </div>
         <div class="note" style="margin-top:8px;">
-            <b>หมายเหตุ:</b> SAV = Surface-Area-to-Volume Ratio (อัตราส่วนพื้นที่ผิวต่อปริมาตร) ค่าสูง =
-            เชื้อเพลิงชิ้นเล็ก ติดไฟเร็ว |
+            <b>หมายเหตุ:</b> SAV = Surface-Area-to-Volume Ratio — คำนวณแบบ weighted average จาก fuel load |
             Mx = ความชื้นดับ (Moisture of Extinction) ค่าต่ำ = ดับเร็วเมื่อชื้น |
-            ค่าทั้งหมดอ้างอิง Anderson (1982) "Aids to Determining Fuel Models for Estimating Fire Behavior"
+            <b>ค่า Mx ปรับแล้ว</b>สำหรับสภาพเขตร้อนชื้นของไทย (สูงกว่า Anderson 1982 ต้นฉบับ) |
+            อ้างอิง Anderson (1982) "Aids to Determining Fuel Models for Estimating Fire Behavior"
         </div>
     </div>
 
@@ -1202,10 +1202,10 @@
                 </div>
                 <div class="item">
                     <div class="label">ความน่าจะเป็นการลาม (P<sub>spread</sub>)</div>
-                    <div class="val" style="font-family:'Courier New'; font-size:14px;">P = min(0.95, R / 11.25)
+                    <div class="val" style="font-family:'Courier New'; font-size:14px;">P = min(0.95, R / 112.5)
                     </div>
                     <div style="font-size:11px; color:#4a5568;">
-                        R=30 → P=0.27 (ลามช้า) | R=100 → P=0.89 (ลามปกติ) | R≥150 → P=0.95 (ลามเร็ว)
+                        R=30 → P=0.27 (ลามช้า) | R=100 → P=0.89 (ลามปกติ) | R≥107 → P=0.95 (ลามเร็ว)
                     </div>
                 </div>
             </div>
@@ -1305,10 +1305,11 @@
         <h2><span class="step-num">7</span> คะแนนความเสี่ยง (Risk Score)</h2>
         <div class="formula-box" style="border-color:#a855f7;">
             <div class="ftitle">สูตรคะแนนความเสี่ยง (Weighted Average)</div>
-            <div class="formula" style="font-size:14px;">Risk = FDI×0.30 + Wind×0.20 + Temp×0.15 + Humidity×0.15 +
-                Spread×0.20</div>
+            <div class="formula" style="font-size:14px;">Risk = FDI×0.20 + Wind×0.10 + Temp×0.20 + Humidity×0.15 +
+                Spread×0.15 + History×0.20</div>
             <div class="explain">
-                ค่าทุกตัวถูก normalize เป็น 0–1 ก่อนถ่วงน้ำหนัก
+                ค่าทุกตัวถูก normalize เป็น 0–1 ก่อนถ่วงน้ำหนัก<br>
+                <b>History</b> = ประวัติไฟซ้ำ (burn scar recurrence) — 0 ครั้ง=0, 1 ครั้ง=0.5, ≥2 ครั้ง=1.0
             </div>
         </div>
         <div class="grid-2" style="margin-top:8px;">
@@ -1322,17 +1323,17 @@
                     <tr>
                         <td style="color:#f87171;">FDI</td>
                         <td>ใช้ค่าตรง (0–1)</td>
-                        <td>30%</td>
+                        <td>20%</td>
                     </tr>
                     <tr>
                         <td style="color:#60a5fa;">ลม</td>
                         <td>wind / 10.0</td>
-                        <td>20%</td>
+                        <td>10%</td>
                     </tr>
                     <tr>
                         <td style="color:#fbbf24;">อุณหภูมิ</td>
                         <td>(T−15) / 25</td>
-                        <td>15%</td>
+                        <td>20%</td>
                     </tr>
                     <tr>
                         <td style="color:#86efac;">ความชื้น</td>
@@ -1342,6 +1343,11 @@
                     <tr>
                         <td style="color:#c084fc;">P<sub>spread</sub></td>
                         <td>ค่าเฉลี่ย (0–1)</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#fb923c;">ประวัติไฟซ้ำ</td>
+                        <td>min(1.0, recurrence × 0.5)</td>
                         <td>20%</td>
                     </tr>
                 </table>
@@ -1697,7 +1703,7 @@
                             <div
                                 style="background:#7c3aed;color:#fff;padding:8px 14px;border-radius:8px;text-align:center;width:100%;max-width:180px;">
                                 <div style="font-size:11px;font-weight:700;">คำนวณ Risk Score</div>
-                                <div style="font-size:9px;opacity:0.9;">FDI×0.3 + Wind×0.2 + ...</div>
+                                <div style="font-size:9px;opacity:0.9;">FDI×0.2 + Wind×0.1 + Hist×0.2 + ...</div>
                             </div>
                         </div>
                         <!-- Spread: NO -->
@@ -1795,7 +1801,7 @@
                         อุณหภูมิ <b>37°C</b> | ความชื้นสัมพัทธ์ <b>30%</b> | ลม <b>5 m/s</b><br>
                         → M<sub>f</sub> ≈ <span style="color:#b91c1c;">0.08</span> (เชื้อเพลิงแห้ง)<br>
                         → R ≈ <span style="color:#b91c1c;">150 ม./ชม.</span> (Rothermel)<br>
-                        → P<sub>spread</sub> = min(0.95, 150/11.25) = <b>0.95</b><br>
+                        → P<sub>spread</sub> = min(0.95, 150/112.5) = <b>0.95</b><br>
                         → CA 4 ชม.: ขยาย <b>1.5–2.2 กม.</b><br>
                         → Risk Score: <span style="color:#b91c1c;font-weight:700;">สูงมาก</span>
                     </div>
@@ -1812,8 +1818,8 @@
                     </div>
                 </div>
             </div>
-        เพื่อประมาณขอบเขตพื้นที่ที่อาจได้รับผลกระทบในแต่ละช่วงเวลา
-    </div>
+            เพื่อประมาณขอบเขตพื้นที่ที่อาจได้รับผลกระทบในแต่ละช่วงเวลา
+        </div>
     </div>
 
     <div class="footer">
