@@ -851,7 +851,7 @@
                 <div class="item">
                     <div class="label">สภาพอากาศ (Weather)</div>
                     <div class="val">Open-Meteo API</div>
-                    <div style="font-size:11px; color:#4a5568;">อัพเดตทุก 1 ชม.<br>อุณหภูมิ, ความชื้น, ลม</div>
+                    <div style="font-size:11px; color:#4a5568;">อัพเดตทุก 1 ชม. + hourly forecast 5 ชม.<br>อุณหภูมิ, ความชื้น, ลม (per-cluster)<br>บันทึกลง DB ทุกรอบ predict</div>
                 </div>
                 <div class="item">
                     <div class="label">ภูมิประเทศ (Terrain)</div>
@@ -971,7 +971,7 @@
             <b>เหตุผลที่จุดอายุ 3-12 ชม. ยังใช้พยากรณ์ได้:</b>
             Rothermel model ใช้จุดความร้อนเป็น <b>"จุดเริ่มต้น" (Ignition Point)</b> เท่านั้น ไม่ได้ใช้ "อายุ" เป็น
             input
-            สิ่งที่สำคัญคือสภาพอากาศ real-time ณ เวลาจำลอง ซึ่งระบบดึงใหม่ทุกรอบ
+            สิ่งที่สำคัญคือสภาพอากาศ real-time ณ เวลาจำลอง ซึ่งระบบดึงใหม่ทุกรอบ พร้อม hourly forecast เพื่ออัพเดตสภาพอากาศทุก timestep
         </div>
     </div>
 
@@ -1123,7 +1123,7 @@
                 <b>ρ<sub>b</sub></b> = ความหนาแน่นรวมเชื้อเพลิง (Bulk density) = w<sub>o</sub> / δ<br>
                 <b>ε</b> = ตัวเลขความร้อนจริง (Effective heating number) = 1.0<br>
                 <b>Q<sub>ig</sub></b> = ความร้อนจุดติดไฟ (Heat of preignition) = 250 + 1,116 × M<sub>f</sub><br>
-                <b>ผลลัพธ์ R</b> = อัตราลาม (ม./ชม.) — ค่าขั้นต่ำ = <span class="hl-orange">30 ม./ชม.</span>
+                <b>ผลลัพธ์ R</b> = อัตราลาม (ม./ชม.) — ค่าขั้นต่ำ = <span class="hl-orange">10 ม./ชม.</span>
             </div>
         </div>
 
@@ -1189,7 +1189,7 @@
                     <div class="label">จำนวน Timesteps</div>
                     <div class="val"><span class="hl-yellow">5 ขั้น</span> (T0–T4) = พยากรณ์ 4 ชั่วโมง</div>
                     <div style="font-size:11px; color:#4a5568;">T0 = สถานะปัจจุบัน (ตำแหน่ง hotspot) | T1–T4 =
-                        พยากรณ์ล่วงหน้า</div>
+                        พยากรณ์ล่วงหน้า<br>แต่ละ step อัพเดตสภาพอากาศจาก hourly forecast</div>
                 </div>
                 <div class="item" style="margin-bottom:7px;">
                     <div class="label">ระยะห่างระหว่างชั้น</div>
@@ -1267,8 +1267,8 @@
                 </tr>
                 <tr>
                     <td style="color:#fbbf24;">R ขั้นต่ำ</td>
-                    <td style="font-family:monospace; font-size:11px;">max(30, R)</td>
-                    <td>≥ 30 ม./ชม.</td>
+                    <td style="font-family:monospace; font-size:11px;">max(10, R)</td>
+                    <td>≥ 10 ม./ชม.</td>
                     <td>Hotspot ที่ตรวจพบแล้วลามได้เสมอ</td>
                 </tr>
                 <tr>
@@ -1529,7 +1529,7 @@
                 <div class="label">Update Frequency (ความถี่อัปเดต)</div>
                 <div class="val" style="color:#6366f1;">ทุก 1 ชม. <small>= Re-initialization</small></div>
                 <div style="font-size:11px;color:#4a5568;margin-top:4px;">
-                    ดึงจุดความร้อน + สภาพอากาศล่าสุด<br>
+                    ดึงจุดความร้อน + สภาพอากาศล่าสุด (current + hourly forecast)<br>
                     Dedup predictions — เก็บ batch ล่าสุดต่อ location<br>
                     <span style="color:#16a34a;font-weight:600;">ดีกว่ามาตรฐานสากล (2–4 ชม.)</span>
                 </div>
@@ -1653,8 +1653,8 @@
                     <!-- Weather -->
                     <div
                         style="background:#fff;border:2px solid #0891b2;padding:10px 18px;border-radius:8px;text-align:center;width:100%;max-width:240px;">
-                        <div style="font-size:12px;font-weight:700;color:#0e7490;">ดึงสภาพอากาศ</div>
-                        <div style="font-size:10px;color:#4a5568;">Open-Meteo API (T, RH, Wind)</div>
+                        <div style="font-size:12px;font-weight:700;color:#0e7490;">ดึงสภาพอากาศ per-cluster</div>
+                        <div style="font-size:10px;color:#4a5568;">Open-Meteo API (current + hourly forecast 5 ชม.)<br>บันทึกลง DB (prediction_weather)</div>
                     </div>
                     <div style="width:2px;height:16px;background:#94a3b8;"></div>
 
@@ -1811,8 +1811,8 @@
                     <div class="ex-detail">
                         อุณหภูมิ <b>25°C</b> | ความชื้นสัมพัทธ์ <b>85%</b> | ลม <b>1 m/s</b><br>
                         → M<sub>f</sub> ≈ <span style="color:#16a34a;">0.155</span> (เชื้อเพลิงชื้น)<br>
-                        → R ≈ <span style="color:#16a34a;">30 ม./ชม.</span> (ค่าขั้นต่ำ)<br>
-                        → P<sub>spread</sub> = 0.27 × dampening = <b>0.054</b><br>
+                        → R ≈ <span style="color:#16a34a;">10 ม./ชม.</span> (ค่าขั้นต่ำ)<br>
+                        → P<sub>spread</sub> = 0.089 × dampening = <b>0.018</b><br>
                         → CA 4 ชม.: ขยาย <b>0–1 เซลล์</b><br>
                         → Risk Score: <span style="color:#16a34a;font-weight:700;">ต่ำ</span>
                     </div>
