@@ -1163,6 +1163,61 @@
 
     <div class="flow-arrow">▼</div>
 
+    <!-- ========== 5b. FARSITE VECTOR APPROACH ========== -->
+    <div class="section" style="background:rgba(251,146,60,0.05); border:1px solid rgba(251,146,60,0.35);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f97316,#facc15);"></div>
+        <h2 style="color:#c2410c;"><span class="step-num" style="background:#ea580c;color:#fff;">5b</span>
+            FARSITE Vector Approach — Finney (1998)</h2>
+        <p style="font-size:12px;color:#4a5568;margin-bottom:10px;">
+            แทนที่จะใช้ wind direction factor แบบ cosine เดิม ระบบนี้ใช้ <b>FARSITE vector approach</b>
+            รวมลมจริงและแรงลามเสมือนจากความลาดชัน (Albini 1976) เป็น vector เดียว แล้วคำนวณการลามแบบ <b>elliptical wavefront</b> (Richards 1990)
+        </p>
+
+        <div class="formula-box" style="border-color:#f97316;">
+            <div class="ftitle">Step 1: φ_s → U_slope (แปลงความลาดชันเป็น "ลมเสมือน" — Albini 1976)</div>
+            <div class="formula" style="font-size:13px;">
+                φ_s = 5.275 × β<sup>-0.3</sup> × (tan slope)<sup>2</sup><br>
+                U_slope = (1/3.281) × (φ_s / (C × (β/β_op)<sup>-E</sup>))<sup>1/B</sup> &nbsp;[m/s]
+            </div>
+            <div class="explain">ทิศทางของ U_slope = Aspect (ทิศ Uphill) | C, B, E ขึ้นกับ fuel_type</div>
+        </div>
+
+        <div class="formula-box" style="border-color:#facc15;">
+            <div class="ftitle">Step 2: Vector Addition → U_effective + θ_max</div>
+            <div class="formula" style="font-size:12px;">
+                u_eff_x = U_wind × sin(wind_dir) + U_slope × sin(aspect)<br>
+                u_eff_y = U_wind × cos(wind_dir) + U_slope × cos(aspect)<br>
+                U_effective = √(u_eff_x² + u_eff_y²) &nbsp;|&nbsp; θ_max = atan2(u_eff_x, u_eff_y) mod 360°
+            </div>
+            <div class="explain">U_effective = ความเร็วลมรวม (ลมจริง + แรงลาดเขา) | θ_max = ทิศที่ไฟลามเร็วที่สุด</div>
+        </div>
+
+        <div class="formula-box" style="border-color:#22d3ee;">
+            <div class="ftitle">Step 3: R_max จาก Rothermel ด้วย U_effective (slope=0)</div>
+            <div class="formula" style="font-size:13px;">
+                R_max = Rothermel(fuel_type, M_f, wind=U_effective, slope=0°)
+            </div>
+            <div class="explain">ส่ง U_effective แทน wind_speed | slope_degrees=0 เพราะรวมใน U_slope แล้ว</div>
+        </div>
+
+        <div class="formula-box" style="border-color:#a78bfa;">
+            <div class="ftitle">Step 4: Elliptical Wavefront — Richards (1990) / Anderson (1983)</div>
+            <div class="formula" style="font-size:13px;">
+                LB = max(1.0, 0.936×e<sup>0.2566×U_eff</sup> + 0.461×e<sup>-0.1548×U_eff</sup> − 0.397)<br>
+                e = √(LB²−1) / LB<br>
+                R_θ = R_max × (1−e²) / (1 − e×cos(spread_dir − θ_max))<br>
+                P_spread = min(0.95, R_θ / 112.5)
+            </div>
+            <div class="explain">
+                <b>LB</b> = Length-to-Breadth ratio (ความรีของ ellipse) | <b>e</b> = eccentricity<br>
+                <b>R_θ</b> = อัตราลามในทิศ spread_dir | <b>112.5</b> = CELL_SIZE(375) × 0.3<br>
+                อ้างอิง: Finney (1998) FARSITE RMRS-RP-4 Ch.3 | Richards (1990) | Anderson (1983)
+            </div>
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
     <!-- ========== 6. CA SIMULATION ========== -->
     <div class="section s-ca">
         <h2><span class="step-num">6</span> การจำลอง Cellular Automata — 5 ขั้นเวลา</h2>
@@ -1202,10 +1257,13 @@
                 </div>
                 <div class="item">
                     <div class="label">ความน่าจะเป็นการลาม (P<sub>spread</sub>)</div>
-                    <div class="val" style="font-family:'Courier New'; font-size:14px;">P = min(0.95, R / 112.5)
+                    <div class="val" style="font-family:'Courier New'; font-size:13px;">P = min(0.95, R_θ / 112.5)</div>
+                    <div class="val" style="font-family:'Courier New'; font-size:12px; margin-top:4px; color:#facc15;">
+                        P'_spread = P × F_humidity × F_FDI × F_NBR × F_temp × F_fuel
                     </div>
-                    <div style="font-size:11px; color:#4a5568;">
-                        R=30 → P=0.27 (ลามช้า) | R=100 → P=0.89 (ลามปกติ) | R≥107 → P=0.95 (ลามเร็ว)
+                    <div style="font-size:11px; color:#4a5568; margin-top:4px;">
+                        R_θ = อัตราลามในทิศนั้น (จาก FARSITE elliptical) | 112.5 = 375m × 0.3<br>
+                        ตัวปรับแต่ละตัวคูณซ้อนกัน — ดูรายละเอียดด้านล่าง
                     </div>
                 </div>
             </div>
@@ -1223,47 +1281,58 @@
                     <th>อธิบาย</th>
                 </tr>
                 <tr>
-                    <td style="color:#60a5fa;">ทิศทางลม</td>
-                    <td style="font-family:monospace; font-size:11px;">((1+cosθ)²)/4 × turb(0.6–1.4)</td>
-                    <td>0.15 – 1.4</td>
-                    <td>ใต้ลม = ลามเร็ว, เหนือลม = ช้า (ขั้นต่ำ 0.15)</td>
+                    <td style="color:#60a5fa;">FARSITE Elliptical</td>
+                    <td style="font-family:monospace; font-size:11px;">R_θ = R_max×(1−e²)/(1−e×cos(Δθ))</td>
+                    <td>0 – R_max</td>
+                    <td>ทิศใต้ลม+ลาดเขา = ลามเร็ว | สวนทาง = ช้า (รวมใน P_spread แล้ว)</td>
                 </tr>
                 <tr>
-                    <td style="color:#f87171;">FDI Factor</td>
+                    <td style="color:#c084fc;">F_humidity &gt;90%</td>
+                    <td style="font-family:monospace; font-size:11px;">P = 0 (early exit)</td>
+                    <td>หยุดลาม</td>
+                    <td>ความชื้นเกิน 90% — ไม่คำนวณต่อ</td>
+                </tr>
+                <tr>
+                    <td style="color:#c084fc;">F_humidity 85–90%</td>
+                    <td style="font-family:monospace; font-size:11px;">× 0.2</td>
+                    <td>ลด 80%</td>
+                    <td>ลามช้ามากแต่ยังลามได้</td>
+                </tr>
+                <tr>
+                    <td style="color:#c084fc;">F_humidity ปกติ</td>
+                    <td style="font-family:monospace; font-size:11px;">× 1.0</td>
+                    <td>ไม่เปลี่ยน</td>
+                    <td>ความชื้น ≤ 85%</td>
+                </tr>
+                <tr>
+                    <td style="color:#f87171;">F_FDI</td>
                     <td style="font-family:monospace; font-size:11px;">0.5 + FDI × 1.5</td>
                     <td>0.5 – 2.0</td>
                     <td>FDI=0 → ×0.5 (ลดครึ่ง) | FDI=1 → ×2.0 (เร็วเท่าตัว)</td>
                 </tr>
                 <tr>
-                    <td style="color:#86efac;">NBR Factor</td>
-                    <td style="font-family:monospace; font-size:11px;">NBR&lt;0: max(0.1, 1+NBR)<br>NBR≥0: 1 + NBR×0.5
-                    </td>
+                    <td style="color:#86efac;">F_NBR</td>
+                    <td style="font-family:monospace; font-size:11px;">NBR&lt;0: max(0.1, 1+NBR)<br>NBR≥0: 1 + NBR×0.5</td>
                     <td>0.1 – 1.5</td>
                     <td>NBR=-0.5 → ×0.5 (เพิ่งไหม้) | NBR=+0.5 → ×1.25 (พืชแน่น)</td>
                 </tr>
                 <tr>
-                    <td style="color:#c084fc;">ความชื้น &gt;90%</td>
-                    <td style="font-family:monospace; font-size:11px;">P = 0</td>
-                    <td>หยุดลาม</td>
-                    <td>ชื้นเกินขีด — ไฟดับทันที</td>
+                    <td style="color:#fbbf24;">F_temp</td>
+                    <td style="font-family:monospace; font-size:11px;">temp&lt;15°C: ×0.3 | otherwise: ×1.0</td>
+                    <td>0.3 – 1.0</td>
+                    <td>อากาศเย็น — ไฟลามช้า</td>
                 </tr>
                 <tr>
-                    <td style="color:#c084fc;">ความชื้น 85–90%</td>
-                    <td style="font-family:monospace; font-size:11px;">P × 0.2</td>
-                    <td>ลด 80%</td>
-                    <td>ลามช้ามากแต่ยังลามได้</td>
+                    <td style="color:#94a3b8;">F_fuel</td>
+                    <td style="font-family:monospace; font-size:11px;">WATER/URBAN/burned&lt;90d: 0 | else: 1</td>
+                    <td>0 หรือ 1</td>
+                    <td>สิ่งกีดขวาง + รอยไหม้ล่าสุด — ไฟไม่ลาม</td>
                 </tr>
                 <tr>
                     <td style="color:#c084fc;">ชื้น &gt;70% + ลม &lt;2 m/s</td>
                     <td style="font-family:monospace; font-size:11px;">P × max(0.4, 1-0.6×excess×deficit)</td>
                     <td>0.4 – 1.0</td>
-                    <td>สภาพอากาศไม่เอื้อ (ชื้น+ลมอ่อน)</td>
-                </tr>
-                <tr>
-                    <td style="color:#fbbf24;">อุณหภูมิ &lt;15°C</td>
-                    <td style="font-family:monospace; font-size:11px;">P × 0.3</td>
-                    <td>ลด 70%</td>
-                    <td>อากาศเย็น — ไฟลามช้า</td>
+                    <td>dampening เพิ่มเติม (คูณซ้อนหลัง F_humidity)</td>
                 </tr>
                 <tr>
                     <td style="color:#fbbf24;">R ขั้นต่ำ</td>
