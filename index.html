@@ -844,9 +844,21 @@
             <div class="grid-3">
                 <div class="item">
                     <div class="label">จุดความร้อน (Hotspots)</div>
-                    <div class="val">MODIS / VIIRS</div>
-                    <div style="font-size:11px; color:#4a5568;">ดาวเทียม NASA — ตรวจจุดไฟรายชั่วโมง<br>ความละเอียด 375
-                        ม. (VIIRS)</div>
+                    <div class="val">GISTDA <small>(primary)</small> + NASA FIRMS <small>(fallback)</small></div>
+                    <div style="font-size:11px; color:#4a5568;">
+                        ดาวเทียม MODIS (1 km) + VIIRS (375 m)<br>
+                        เก็บลง PM25 DB (GCP 35.187.227.156)<br>
+                        อัพเดตทุก 1 ชม. — ใช้จุดอายุ ≤ 24 ชม.
+                    </div>
+                    <div style="font-size:11px; margin-top:6px;">
+                        <b style="color:#aaa;">สีตามอายุ:</b><br>
+                        <span style="color:#c03227;">●</span> &lt;1 ชม. &nbsp;
+                        <span style="color:#ea5e21;">●</span> 1–3 ชม. &nbsp;
+                        <span style="color:#ee7910;">●</span> 3–6 ชม.<br>
+                        <span style="color:#e89d26;">●</span> 6–12 ชม. &nbsp;
+                        <span style="color:#d96d27;">●</span> 12–24 ชม. &nbsp;
+                        <span style="color:#577b9d;">●</span> &gt;24 ชม.
+                    </div>
                 </div>
                 <div class="item">
                     <div class="label">สภาพอากาศ (Weather)</div>
