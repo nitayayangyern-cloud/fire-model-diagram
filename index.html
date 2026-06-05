@@ -1184,16 +1184,45 @@
             แหล่งข้อมูล: <b>SRTM DEM 30m</b> (terrain.dem_north8) → ประมวลผลใน PostGIS → เก็บที่ความละเอียด <b>375m</b> (terrain_python schema)
         </p>
 
+        <!-- WHY -->
+        <div class="note" style="margin-bottom:12px; border-color:#059669;">
+            <b>ทำไมต้อง Aggregate DEM 30m → 375m ก่อน แล้วค่อยคำนวณ Slope/Aspect?</b><br>
+            <span style="color:#4a5568;">
+                Grid ของระบบใช้ขนาดเซลล์ <b>375m</b> (ตาม VIIRS) — ถ้าคำนวณ slope/aspect จาก DEM 30m โดยตรง
+                แล้วค่อย resample ผลลัพธ์ จะเกิดการ smooth ค่าที่ผิด<br>
+                อ้างอิง: <i>Bohmann (2015)</i> — "Using a low resolution DEM for regional scale morphometric analysis
+                is not an optimal choice since attenuation of elevation will strongly affect the distribution of
+                calculated parameters. One should choose to derive basic morphometers from higher resolution data
+                and resample it to a coarser resolution as needed."<br><br>
+                <b>วิธีที่ถูกต้อง:</b> Aggregate DEM ก่อน (30m → 375m) แล้วคำนวณ slope/aspect จาก DEM 375m
+            </span>
+        </div>
+
+        <!-- Scale factor -->
+        <div class="formula-box" style="border-color:#a78bfa; margin-bottom:12px;">
+            <div class="ftitle">Scale Factor — แปลงหน่วย pixel (degrees → meters)</div>
+            <div class="formula" style="font-size:13px;">
+                pixel_size_deg = 375.0 / 111000.0 ≈ 0.003378°<br>
+                ST_Rescale(rast, 375.0/111000.0, 375.0/111000.0, <span style="color:#c084fc;">'Average'</span>)
+            </div>
+            <div class="explain">
+                111,000 m/° = ระยะทางจริง 1 องศาละติจูด ≈ 111 กม.<br>
+                Scale factor = target/source = 375/30 = <b>12.5</b> → รวม pixel 12.5×12.5 = ~156 pixel ต่อ 1 เซลล์ 375m<br>
+                ใช้ Average เพราะต้องการค่าเฉลี่ยความสูง ไม่ใช่ค่าสูงสุด/ต่ำสุด
+            </div>
+        </div>
+
         <div class="grid-2">
             <div>
                 <div class="formula-box" style="border-color:#059669;">
                     <div class="ftitle">Slope — ความลาดชัน (degrees)</div>
-                    <div class="formula" style="font-size:13px;">
-                        DEM 30m → ST_Rescale Average → DEM 375m<br>
-                        slope = ST_Slope(DEM_375m, scale=111120) [degrees]
+                    <div class="formula" style="font-size:12px;">
+                        <span style="color:#6ee7b7;">Step 1:</span> DEM_375m = ST_Rescale(DEM_30m, 375/111000, <span style="color:#c084fc;">'Average'</span>)<br>
+                        <span style="color:#6ee7b7;">Step 2:</span> slope = ST_Slope(DEM_375m, 1, '32BF', 'DEGREES', <b>111120.0</b>)
                     </div>
                     <div class="explain">
-                        scale=111120 แปลง horizontal (degrees) → meters ให้ตรงกับ elevation (meters)<br>
+                        scale=111120 แปลง horizontal unit (degrees) → meters ให้ตรงกับ elevation (meters)<br>
+                        คำนวณจาก DEM ที่ aggregate แล้ว → slope สะท้อน terrain ระดับ 375m จริงๆ<br>
                         ตาราง: <code style="color:#34d399;">terrain_python.slope_375m</code>
                     </div>
                 </div>
@@ -1202,22 +1231,22 @@
                 <div class="formula-box" style="border-color:#22d3ee;">
                     <div class="ftitle">Aspect — ทิศความลาดชัน (Circular Mean)</div>
                     <div class="formula" style="font-size:12px;">
-                        northness = cos(radians(aspect_30m))<br>
-                        eastness &nbsp;= sin(radians(aspect_30m))<br>
-                        n̄ = ST_Rescale(northness, Average) &nbsp;|&nbsp; ē = ST_Rescale(eastness, Average)<br>
-                        aspect_375m = atan2(ē, n̄) mod 360°
+                        <span style="color:#67e8f9;">Step 1:</span> aspect_30m = ST_Aspect(DEM_30m, 'DEGREES')<br>
+                        <span style="color:#67e8f9;">Step 2:</span> northness = cos(radians(aspect_30m))<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eastness = sin(radians(aspect_30m))<br>
+                        <span style="color:#67e8f9;">Step 3:</span> n̄ = ST_Rescale(northness, <span style="color:#c084fc;">'Average'</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ē = ST_Rescale(eastness, <span style="color:#c084fc;">'Average'</span>)<br>
+                        <span style="color:#67e8f9;">Step 4:</span> aspect_375m = atan2(ē, n̄) mod 360°
                     </div>
                     <div class="explain">
-                        ใช้ Circular Mean แทน Linear Average เพื่อแก้ปัญหา 1° และ 359° เฉลี่ยได้ 180° (ผิดทิศ)<br>
-                        GIS convention: aspect = downslope → ระบบ flip +180° เพื่อให้ได้ทิศ uphill<br>
+                        <b>ทำไม Circular Mean:</b> aspect เป็นข้อมูลวงกลม — Linear Average ให้ค่าผิด<br>
+                        &nbsp;&nbsp;เช่น เฉลี่ย 1° กับ 359° → Linear=180° (ผิดทิศ) | Circular≈0° (ถูก)<br>
+                        northness/eastness เป็น scalar → Average ถูกต้อง → atan2 กลับ<br>
+                        GIS convention: aspect = downslope → flip +180° → ได้ทิศ <b>uphill</b><br>
                         ตาราง: <code style="color:#34d399;">terrain_python.aspect_375m</code>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="note" style="margin-top:8px;">
-            <b>ทำไมต้อง Circular Mean:</b> aspect เป็นข้อมูลวงกลม (0°=360°) — Linear Average ให้ค่าผิด เช่น เฉลี่ย 1° กับ 359° ได้ 180° (ผิดทิศ 180°) แต่ Circular Mean ผ่าน northness/eastness ได้ ~0° ซึ่งถูกต้อง
         </div>
     </div>
 
