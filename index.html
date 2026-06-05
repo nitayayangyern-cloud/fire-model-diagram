@@ -1163,6 +1163,54 @@
 
     <div class="flow-arrow">▼</div>
 
+    <!-- ========== 5a. TERRAIN PROCESSING ========== -->
+    <div class="section" style="background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.3);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#059669,#22d3ee);"></div>
+        <h2 style="color:#047857;"><span class="step-num" style="background:#059669;color:#fff;">5a</span>
+            การประมวลผลภูมิประเทศ (Terrain Processing)</h2>
+        <p style="font-size:12px;color:#4a5568;margin-bottom:10px;">
+            แหล่งข้อมูล: <b>SRTM DEM 30m</b> (terrain.dem_north8) → ประมวลผลใน PostGIS → เก็บที่ความละเอียด <b>375m</b> (terrain_python schema)
+        </p>
+
+        <div class="grid-2">
+            <div>
+                <div class="formula-box" style="border-color:#059669;">
+                    <div class="ftitle">Slope — ความลาดชัน (degrees)</div>
+                    <div class="formula" style="font-size:13px;">
+                        DEM 30m → ST_Rescale Average → DEM 375m<br>
+                        slope = ST_Slope(DEM_375m, scale=111120) [degrees]
+                    </div>
+                    <div class="explain">
+                        scale=111120 แปลง horizontal (degrees) → meters ให้ตรงกับ elevation (meters)<br>
+                        ตาราง: <code style="color:#34d399;">terrain_python.slope_375m</code>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="formula-box" style="border-color:#22d3ee;">
+                    <div class="ftitle">Aspect — ทิศความลาดชัน (Circular Mean)</div>
+                    <div class="formula" style="font-size:12px;">
+                        northness = cos(radians(aspect_30m))<br>
+                        eastness &nbsp;= sin(radians(aspect_30m))<br>
+                        n̄ = ST_Rescale(northness, Average) &nbsp;|&nbsp; ē = ST_Rescale(eastness, Average)<br>
+                        aspect_375m = atan2(ē, n̄) mod 360°
+                    </div>
+                    <div class="explain">
+                        ใช้ Circular Mean แทน Linear Average เพื่อแก้ปัญหา 1° และ 359° เฉลี่ยได้ 180° (ผิดทิศ)<br>
+                        GIS convention: aspect = downslope → ระบบ flip +180° เพื่อให้ได้ทิศ uphill<br>
+                        ตาราง: <code style="color:#34d399;">terrain_python.aspect_375m</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note" style="margin-top:8px;">
+            <b>ทำไมต้อง Circular Mean:</b> aspect เป็นข้อมูลวงกลม (0°=360°) — Linear Average ให้ค่าผิด เช่น เฉลี่ย 1° กับ 359° ได้ 180° (ผิดทิศ 180°) แต่ Circular Mean ผ่าน northness/eastness ได้ ~0° ซึ่งถูกต้อง
+        </div>
+    </div>
+
+    <div class="flow-arrow">▼</div>
+
     <!-- ========== 5b. FARSITE VECTOR APPROACH ========== -->
     <div class="section" style="background:rgba(251,146,60,0.05); border:1px solid rgba(251,146,60,0.35);">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f97316,#facc15);"></div>
