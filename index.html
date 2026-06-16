@@ -1136,7 +1136,7 @@
                 <b>ρ<sub>b</sub></b> = ความหนาแน่นรวมเชื้อเพลิง (Bulk density) = w<sub>o</sub> / δ<br>
                 <b>ε</b> = ตัวเลขความร้อนจริง (Effective heating number) = exp(−138/σ)<br>
                 <b>Q<sub>ig</sub></b> = ความร้อนจุดติดไฟ (Heat of preignition) = 250 + 1,116 × M<sub>f</sub><br>
-                <b>ผลลัพธ์ R</b> = อัตราลาม (ม./ชม.) — ค่าขั้นต่ำ = <span class="hl-orange">10 ม./ชม.</span>
+                <b>ผลลัพธ์ R</b> = อัตราลาม (ม./ชม.) <span style="color:#fb923c; font-size:10px;">(ไม่กำหนดค่าขั้นต่ำบังคับ — ต่ำสุดได้ถึง 0 เมื่อสภาพไม่เอื้อ)</span>
             </div>
         </div>
 
@@ -1424,10 +1424,10 @@
                     <td>ตัวหน่วงเพิ่มเติม (คูณซ้อนหลัง F_humidity)</td>
                 </tr>
                 <tr>
-                    <td style="color:#fbbf24;">R ขั้นต่ำ</td>
-                    <td style="font-family:monospace; font-size:11px;">max(10, R)</td>
-                    <td>≥ 10 ม./ชม.</td>
-                    <td>Hotspot ที่ตรวจพบแล้วลามได้เสมอ</td>
+                    <td style="color:#fbbf24;">ขอบเขตของ R</td>
+                    <td style="font-family:monospace; font-size:11px;">max(0, R)</td>
+                    <td>≥ 0</td>
+                    <td>ไม่กำหนดค่าขั้นต่ำ — สภาพไม่เอื้อ R เข้าใกล้ 0 ได้</td>
                 </tr>
                 <tr>
                     <td style="color:#fbbf24;">P สุดท้าย</td>
@@ -1968,7 +1968,7 @@
                     <div class="ex-detail">
                         อุณหภูมิ <b>25°C</b> | ความชื้นสัมพัทธ์ <b>85%</b> | ลม <b>1 m/s</b><br>
                         → M<sub>f</sub> ≈ <span style="color:#16a34a;">0.155</span> (เชื้อเพลิงชื้น)<br>
-                        → R ≈ <span style="color:#16a34a;">10 ม./ชม.</span> (ค่าขั้นต่ำ)<br>
+                        → R ≈ <span style="color:#16a34a;">10 ม./ชม.</span> (ลมอ่อน + เชื้อเพลิงชื้น)<br>
                         → P<sub>spread</sub> = 0.089 × ตัวหน่วง = <b>0.018</b><br>
                         → CA 4 ชม.: ขยาย <b>0–1 เซลล์</b><br>
                         → Risk Score: <span style="color:#16a34a;font-weight:700;">ต่ำ</span>
