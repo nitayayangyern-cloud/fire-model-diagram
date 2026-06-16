@@ -848,7 +848,7 @@
                     <div style="font-size:11px; color:#4a5568;">
                         ดาวเทียม MODIS (1 km) + VIIRS (375 m)<br>
                         เก็บลง PM25 DB (GCP 35.187.227.156)<br>
-                        อัพเดตทุก 1 ชม. — ใช้จุดอายุ ≤ 24 ชม.
+                        อัปเดตทุก 1 ชม. ใช้เฉพาะจุดที่มีอายุไม่เกิน 24 ชม.
                     </div>
                     <div style="font-size:11px; margin-top:6px;">
                         <b style="color:#aaa;">สีตามอายุ:</b><br>
@@ -863,7 +863,7 @@
                 <div class="item">
                     <div class="label">สภาพอากาศ (Weather)</div>
                     <div class="val">Open-Meteo API</div>
-                    <div style="font-size:11px; color:#4a5568;">อัพเดตทุก 1 ชม. + hourly forecast 5 ชม.<br>อุณหภูมิ, ความชื้น, ลม (per-cluster)<br>บันทึกลง DB ทุกรอบ predict</div>
+                    <div style="font-size:11px; color:#4a5568;">อัปเดตทุก 1 ชม. พร้อมค่าพยากรณ์รายชั่วโมงล่วงหน้า 5 ชม.<br>อุณหภูมิ ความชื้น และความเร็วลม (รายคลัสเตอร์)<br>บันทึกลงฐานข้อมูลทุกรอบการพยากรณ์</div>
                 </div>
                 <div class="item">
                     <div class="label">ภูมิประเทศ (Terrain)</div>
@@ -910,13 +910,13 @@
         <h2 style="color:#b91c1c;"><span class="step-num" style="background:#b91c1c;color:#fff;">2</span>
             อายุจุดความร้อน (Hotspot Age Classification)</h2>
         <p style="font-size:12px;color:#4a5568;margin-bottom:10px;">
-            ดาวเทียม VIIRS โคจรผ่านพื้นที่เดิมทุก ~4-6 ชม. ดังนั้นจุดอายุ ≤ 12 ชม. = <b>ข้อมูลล่าสุดที่เป็นไปได้</b>
-            ระบบจำแนกสีตามอายุเพื่อให้ผู้ใช้ประเมินความสดของข้อมูลได้ง่าย
+            ดาวเทียม VIIRS โคจรกลับมายังพื้นที่เดิมทุก ๆ ประมาณ 4–6 ชั่วโมง จุดความร้อนที่มีอายุไม่เกิน 12 ชั่วโมงจึงถือเป็น<b>ข้อมูลล่าสุดเท่าที่ระบบจะมีได้</b>
+            ระบบจำแนกสีตามอายุของจุดความร้อน เพื่อให้ผู้ใช้งานประเมินความเป็นปัจจุบันของข้อมูลได้โดยสะดวก
         </p>
         <div style="overflow-x:auto;">
             <table class="ptable">
                 <tr>
-                    <th>ระดับความสด</th>
+                    <th>ระดับความใหม่</th>
                     <th>อายุ</th>
                     <th>ความน่าเชื่อถือ</th>
                     <th>ใช้พยากรณ์?</th>
@@ -930,7 +930,7 @@
                         &lt; 1 ชม.</td>
                     <td style="color:#16a34a;"><span style="color:#16a34a;">●</span> ดีเยี่ยม</td>
                     <td><span style="color:#16a34a;font-weight:700;">ใช่</span></td>
-                    <td>ข้อมูลสดมาก (Ultra Real-Time)</td>
+                    <td>ข้อมูลเรียลไทม์ (Real-Time)</td>
                 </tr>
                 <tr>
                     <td><span
@@ -939,7 +939,7 @@
                     <td style="font-weight:700;color:#b91c1c;">1–3 ชม.</td>
                     <td style="color:#16a34a;"><span style="color:#16a34a;">●</span> ดี</td>
                     <td><span style="color:#16a34a;font-weight:700;">ใช่</span></td>
-                    <td>Near Real-Time (NRT) มาตรฐาน NASA FIRMS</td>
+                    <td>ข้อมูลใกล้เรียลไทม์ (NRT) ตามมาตรฐาน NASA FIRMS</td>
                 </tr>
                 <tr>
                     <td><span
@@ -948,7 +948,7 @@
                     <td>3–6 ชม.</td>
                     <td style="color:#16a34a;"><span style="color:#16a34a;">●</span> ดี</td>
                     <td><span style="color:#16a34a;font-weight:700;">ใช่</span></td>
-                    <td>URT/NRT overlap window</td>
+                    <td>ยังอยู่ในช่วงข้อมูลใกล้เรียลไทม์ (NRT)</td>
                 </tr>
                 <tr>
                     <td><span
@@ -957,7 +957,7 @@
                     <td>6–12 ชม.</td>
                     <td style="color:#92400e;"><span style="color:#92400e;">●</span> ใช้ได้</td>
                     <td><span style="color:#16a34a;font-weight:700;">ใช่</span></td>
-                    <td>ภายในรอบ VIIRS revisit (~12 ชม.)</td>
+                    <td>อยู่ภายในรอบการโคจรซ้ำของ VIIRS (~12 ชม.)</td>
                 </tr>
                 <tr>
                     <td><span
@@ -966,7 +966,7 @@
                     <td>12–24 ชม.</td>
                     <td style="color:#c2410c;"><span style="color:#c2410c;">●</span> ระมัดระวัง</td>
                     <td><span style="color:#c2410c;font-weight:700;">ระวัง</span> — อาจดับแล้ว</td>
-                    <td>accuracy ลดลง ใช้เฉพาะแสดง</td>
+                    <td>ความแม่นยำลดลง ใช้เพื่อการแสดงผลเท่านั้น</td>
                 </tr>
                 <tr>
                     <td><span
@@ -975,15 +975,15 @@
                     <td>&gt; 24 ชม.</td>
                     <td style="color:#b91c1c;"><span style="color:#b91c1c;">●</span> เก่า</td>
                     <td><span style="color:#b91c1c;font-weight:700;">ไม่ใช้</span></td>
-                    <td>แสดงเป็นจุดเก่าเท่านั้น</td>
+                    <td>แสดงผลเป็นจุดความร้อนเก่าเท่านั้น</td>
                 </tr>
             </table>
         </div>
         <div class="note" style="margin-top:8px;">
-            <b>เหตุผลที่จุดอายุ 3-12 ชม. ยังใช้พยากรณ์ได้:</b>
-            Rothermel model ใช้จุดความร้อนเป็น <b>"จุดเริ่มต้น" (Ignition Point)</b> เท่านั้น ไม่ได้ใช้ "อายุ" เป็น
-            input
-            สิ่งที่สำคัญคือสภาพอากาศ real-time ณ เวลาจำลอง ซึ่งระบบดึงใหม่ทุกรอบ พร้อม hourly forecast เพื่ออัพเดตสภาพอากาศทุก timestep
+            <b>เหตุผลที่จุดความร้อนอายุ 3–12 ชม. ยังใช้พยากรณ์ได้:</b>
+            แบบจำลอง Rothermel ใช้จุดความร้อนเป็นเพียง <b>"จุดเริ่มต้นของไฟ" (Ignition Point)</b> เท่านั้น มิได้นำ "อายุ"
+            ของจุดความร้อนมาเป็นตัวแปรนำเข้า
+            ปัจจัยสำคัญคือสภาพอากาศตามเวลาจริง ณ ขณะจำลอง ซึ่งระบบดึงข้อมูลใหม่ทุกรอบ พร้อมค่าพยากรณ์รายชั่วโมง เพื่อปรับปรุงสภาพอากาศในทุกช่วงเวลา (timestep)
         </div>
     </div>
 
