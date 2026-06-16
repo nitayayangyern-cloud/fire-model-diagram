@@ -1015,7 +1015,7 @@
             <div class="item">
                 <div class="label">ขนาดเซลล์</div>
                 <div class="val">375 <small>ม.</small></div>
-                <div style="font-size:10px; color:#8892b0">= VIIRS resolution</div>
+                <div style="font-size:10px; color:#8892b0">= ความละเอียด VIIRS</div>
             </div>
             <div class="item">
                 <div class="label">องศา</div>
@@ -1025,11 +1025,11 @@
             <div class="item">
                 <div class="label">เซลล์ที่ติดกัน</div>
                 <div class="val">≤ 562.5 <small>ม.</small></div>
-                <div style="font-size:10px; color:#8892b0">1.5 × cell size</div>
+                <div style="font-size:10px; color:#8892b0">1.5 × ขนาดเซลล์</div>
             </div>
             <div class="item">
-                <div class="label">Hotspot buffer</div>
-                <div class="val">× 0.7 <small>cell</small></div>
+                <div class="label">ระยะกันชนรอบจุดความร้อน</div>
+                <div class="val">× 0.7 <small>เซลล์</small></div>
                 <div style="font-size:10px; color:#8892b0">~262 ม. รัศมี</div>
             </div>
         </div>
@@ -1331,8 +1331,8 @@
                 <div class="item" style="margin-bottom:7px;">
                     <div class="label">จำนวน Timesteps</div>
                     <div class="val"><span class="hl-yellow">5 ขั้น</span> (T0–T4) = พยากรณ์ 4 ชั่วโมง</div>
-                    <div style="font-size:11px; color:#4a5568;">T0 = สถานะปัจจุบัน (ตำแหน่ง hotspot) | T1–T4 =
-                        พยากรณ์ล่วงหน้า<br>แต่ละ step อัพเดตสภาพอากาศจาก hourly forecast</div>
+                    <div style="font-size:11px; color:#4a5568;">T0 = สถานะปัจจุบัน (ตำแหน่งจุดความร้อน) | T1–T4 =
+                        พยากรณ์ล่วงหน้า<br>แต่ละขั้นจะปรับปรุงสภาพอากาศจากค่าพยากรณ์รายชั่วโมง</div>
                 </div>
                 <div class="item" style="margin-bottom:7px;">
                     <div class="label">ระยะห่างระหว่างชั้น</div>
@@ -1376,7 +1376,7 @@
                 </tr>
                 <tr>
                     <td style="color:#c084fc;">F_humidity &gt;90%</td>
-                    <td style="font-family:monospace; font-size:11px;">P = 0 (early exit)</td>
+                    <td style="font-family:monospace; font-size:11px;">P = 0 (หยุดทันที)</td>
                     <td>หยุดลาม</td>
                     <td>ความชื้นเกิน 90% — ไม่คำนวณต่อ</td>
                 </tr>
@@ -1406,7 +1406,7 @@
                 </tr>
                 <tr>
                     <td style="color:#fbbf24;">F_temp</td>
-                    <td style="font-family:monospace; font-size:11px;">temp&lt;15°C: ×0.3 | otherwise: ×1.0</td>
+                    <td style="font-family:monospace; font-size:11px;">temp&lt;15°C: ×0.3 | กรณีอื่น: ×1.0</td>
                     <td>0.3 – 1.0</td>
                     <td>อากาศเย็น — ไฟลามช้า</td>
                 </tr>
@@ -1420,7 +1420,7 @@
                     <td style="color:#c084fc;">ชื้น &gt;70% + ลม &lt;2 m/s</td>
                     <td style="font-family:monospace; font-size:11px;">P × max(0.4, 1-0.6×excess×deficit)</td>
                     <td>0.4 – 1.0</td>
-                    <td>dampening เพิ่มเติม (คูณซ้อนหลัง F_humidity)</td>
+                    <td>ตัวหน่วงเพิ่มเติม (คูณซ้อนหลัง F_humidity)</td>
                 </tr>
                 <tr>
                     <td style="color:#fbbf24;">R ขั้นต่ำ</td>
@@ -1432,7 +1432,7 @@
                     <td style="color:#fbbf24;">P สุดท้าย</td>
                     <td style="font-family:monospace; font-size:11px;">clamp(0.0, 1.0)</td>
                     <td>0.0 – 1.0</td>
-                    <td>จำกัดไว้ในช่วง probability ที่ถูกต้อง</td>
+                    <td>จำกัดไว้ในช่วงความน่าจะเป็นที่ถูกต้อง</td>
                 </tr>
             </table>
         </div>
@@ -1447,9 +1447,9 @@
             <span class="badge badge-urban">เขตอุตสาหกรรม / พาณิชย์</span>
         </div>
         <div class="note">
-            <b>ขั้น 1 (Cell-level):</b> เซลล์ที่ทับน้ำ/ชุมชน ≥ 20% → mark เป็น WATER/URBAN → P<sub>spread</sub> =
+            <b>ขั้น 1 (Cell-level):</b> เซลล์ที่ทับน้ำ/ชุมชน ≥ 20% → กำหนดเป็น WATER/URBAN → P<sub>spread</sub> =
             0<br>
-            <b>ขั้น 2 (Polygon clip):</b> Polygon สุดท้ายถูก clip ตัดออกจากผืนน้ำ (buffer 330 ม.) ไม่ให้ polygon
+            <b>ขั้น 2 (Polygon clip):</b> Polygon สุดท้ายถูกตัดออกจากผืนน้ำ (buffer 330 ม.) ไม่ให้ polygon
             ยื่นเข้าแม่น้ำ<br>
             <b>แหล่งข้อมูล:</b> OSM (59,298 polygons) + RID แม่น้ำสายหลัก (buffer 110–220 ม.)
         </div>
@@ -1465,7 +1465,7 @@
             <div class="formula" style="font-size:14px;">Risk = FDI×0.20 + Wind×0.10 + Temp×0.20 + Humidity×0.15 +
                 Spread×0.15 + History×0.20</div>
             <div class="explain">
-                ค่าทุกตัวถูก normalize เป็น 0–1 ก่อนถ่วงน้ำหนัก<br>
+                ค่าทุกตัวถูกปรับให้อยู่ในช่วง 0–1 (Normalize) ก่อนถ่วงน้ำหนัก<br>
                 <b>History</b> = ประวัติไฟซ้ำ (burn scar recurrence) — 0 ครั้ง=0, 1 ครั้ง=0.5, ≥2 ครั้ง=1.0
             </div>
         </div>
@@ -1474,7 +1474,7 @@
                 <table class="ptable">
                     <tr>
                         <th>ตัวแปร</th>
-                        <th>การ Normalize</th>
+                        <th>การปรับค่า (Normalize)</th>
                         <th>น้ำหนัก</th>
                     </tr>
                     <tr>
@@ -1532,13 +1532,12 @@
             <div class="item">
                 <div class="label">Polygon ไฟลาม</div>
                 <div class="val">5 ชั้น/คลัสเตอร์</div>
-                <div style="font-size:11px; color:#4a5568;">Union circles → Simplify (0.0005°) → Clip
-                    barriers<br>ตัด fragment &lt;5% ทิ้ง</div>
+                <div style="font-size:11px; color:#4a5568;">รวมวงกลม (Union) → ลดจุด (Simplify 0.0005°) → ตัดด้วยสิ่งกีดขวาง (Clip)<br>ตัดเศษพื้นที่ &lt;5% ทิ้ง</div>
             </div>
             <div class="item">
                 <div class="label">ทิศทาง + ความเร็ว</div>
                 <div class="val">ลูกศรแสดงบนแผนที่</div>
-                <div style="font-size:11px; color:#4a5568;">awk(dy,dx) → compass direction<br>จำกัดสูงสุด 3,000
+                <div style="font-size:11px; color:#4a5568;">atan2(dy,dx) → ทิศตามเข็มทิศ<br>จำกัดสูงสุด 3,000
                     ม./ชม.</div>
             </div>
             <div class="item">
@@ -1556,7 +1555,7 @@
                 <div class="label">จุดสีส้ม — กำลังลุกลาม (Spreading)</div>
                 <div class="val" style="color:#fb923c;">จุดที่มีการลุกลามจริง</div>
                 <div style="font-size:11px; color:#4a5568; margin-top:4px; line-height:1.7;">
-                    เงื่อนไข: มี prediction + อยู่ภายใน <span class="hl-orange">~5 กม.</span> จากศูนย์กลางคลัสเตอร์<br>
+                    เงื่อนไข: มีผลการพยากรณ์ + อยู่ภายใน <span class="hl-orange">~5 กม.</span> จากศูนย์กลางคลัสเตอร์<br>
                     + คลัสเตอร์มีเซลล์ลามสำเร็จ ≥ <span class="hl-orange">5 เซลล์</span> (MIN_SPREAD_CELLS)<br>
                     แสดงเป็นจุดสีส้มพร้อม Polygon พื้นที่การลุกลาม
                 </div>
@@ -1591,8 +1590,8 @@
                 <div style="font-size:11px; color:#4a5568; margin-top:4px; line-height:1.7;">
                     แหล่งข้อมูล: <code style="color:#60a5fa;">roads_major.geojson</code><br>
                     ข้อมูล: กรมทางหลวง (PostGIS)<br>
-                    แสดงเส้นประสีเหลือง พร้อม tooltip ชื่อถนน<br>
-                    <span class="hl-cyan">ใช้เป็น reference แนวกันไฟธรรมชาติ</span>
+                    แสดงเส้นประสีเหลือง พร้อมป้ายชื่อถนน (tooltip)<br>
+                    <span class="hl-cyan">ใช้เป็นข้อมูลอ้างอิงแนวกันไฟธรรมชาติ</span>
                 </div>
             </div>
             <div class="item">
@@ -1608,21 +1607,21 @@
         </div>
 
         <!-- Deployment -->
-        <h3 style="font-size:13px; color:#c084fc; margin:14px 0 6px;">การ Deploy (Web Deployment)</h3>
+        <h3 style="font-size:13px; color:#c084fc; margin:14px 0 6px;">การเผยแพร่เว็บ (Web Deployment)</h3>
         <div class="grid-2">
             <div class="item">
-                <div class="label">Platform</div>
+                <div class="label">แพลตฟอร์ม (Platform)</div>
                 <div class="val" style="color:#c084fc;">Vercel</div>
                 <div style="font-size:11px; color:#4a5568; margin-top:4px;">
-                    Auto-deploy จาก GitHub (main branch)<br>
+                    เผยแพร่อัตโนมัติจาก GitHub (main branch)<br>
                     URL: <code style="color:#60a5fa;">fire-prediction-web.vercel.app</code>
                 </div>
             </div>
             <div class="item">
-                <div class="label">Tech Stack</div>
+                <div class="label">เทคโนโลยีที่ใช้ (Tech Stack)</div>
                 <div class="val" style="color:#c084fc;">HTML + JS + Leaflet</div>
                 <div style="font-size:11px; color:#4a5568; margin-top:4px;">
-                    Single page — ไม่มี framework<br>
+                    หน้าเว็บเดียว (Single Page) ไม่ใช้เฟรมเวิร์ก<br>
                     Leaflet.js (แผนที่) + Chart.js (กราฟ)<br>
                     Font: Inter (Google Fonts)
                 </div>
@@ -1644,8 +1643,8 @@
             (Re-initialization) แต่แต่ละรอบ <b>พยากรณ์ล่วงหน้า 4 ชม.</b> (Prediction Horizon)</p>
         <div
             style="background:#f8fafc; border-radius:12px; padding:16px 20px; border:1px solid #e2e8f0; margin:10px 0;">
-            <div style="font-size:11px;color:#4a5568;font-weight:700;margin-bottom:10px;">แผนภาพ: แต่ละรอบ "เขียนทับ"
-                รอบก่อนหน้า ผู้ใช้เห็นเฉพาะ prediction ล่าสุด</div>
+            <div style="font-size:11px;color:#4a5568;font-weight:700;margin-bottom:10px;">แผนภาพ: แต่ละรอบจะ "เขียนทับ"
+                รอบก่อนหน้า ผู้ใช้เห็นเฉพาะผลการพยากรณ์ล่าสุด</div>
             <div style="font-family:'Courier New',monospace;font-size:11px;line-height:2;color:#1a202c;">
                 <div style="display:flex;align-items:center;gap:4px;">
                     <span style="width:90px;font-weight:600;">เวลาจริง</span>
@@ -1686,8 +1685,8 @@
                 <div class="label">Update Frequency (ความถี่อัปเดต)</div>
                 <div class="val" style="color:#6366f1;">ทุก 1 ชม. <small>= Re-initialization</small></div>
                 <div style="font-size:11px;color:#4a5568;margin-top:4px;">
-                    ดึงจุดความร้อน + สภาพอากาศล่าสุด (current + hourly forecast)<br>
-                    Dedup predictions — เก็บ batch ล่าสุดต่อ location<br>
+                    ดึงจุดความร้อน + สภาพอากาศล่าสุด (ปัจจุบัน + พยากรณ์รายชั่วโมง)<br>
+                    ขจัดผลซ้ำ (Dedup) — เก็บชุดข้อมูลล่าสุดของแต่ละพื้นที่<br>
                     <span style="color:#16a34a;font-weight:600;">ดีกว่ามาตรฐานสากล (2–4 ชม.)</span>
                 </div>
             </div>
@@ -1724,20 +1723,20 @@
             <div
                 style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 20px;max-width:500px;width:100%;text-align:center;">
                 <div style="font-size:12px;font-weight:700;color:#059669;">2. export_data_json.py</div>
-                <div style="font-size:10px;color:#4a5568;">ดึง predictions (≤6 ชม.) + hotspots วันนี้ → จับคู่ spreading
+                <div style="font-size:10px;color:#4a5568;">ดึงผลพยากรณ์ (≤6 ชม.) + จุดความร้อนวันนี้ → จับคู่การลุกลาม
                     → สร้าง data.json</div>
             </div>
             <div style="font-size:18px;color:#a0aec0;margin:4px 0;">▼</div>
             <div
                 style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 20px;max-width:500px;width:100%;text-align:center;">
-                <div style="font-size:12px;font-weight:700;color:#2563eb;">3. GitHub Push → Vercel Auto-Deploy</div>
+                <div style="font-size:12px;font-weight:700;color:#2563eb;">3. Push ขึ้น GitHub → เผยแพร่อัตโนมัติผ่าน Vercel</div>
                 <div style="font-size:10px;color:#4a5568;">data.json → fire-prediction-web.vercel.app → แผนที่
                     Leaflet.js แสดงผล</div>
             </div>
         </div>
         <div class="note" style="margin-top:8px;">
-            <b>Orphan Validation:</b> ถ้า prediction T0 มี hotspot จริงรองรับ → เก็บ T0–T4 ทั้งหมด | ถ้าไม่มี hotspot →
-            ลบ prediction ออกจาก data.json
+            <b>การตรวจสอบจุดกำพร้า (Orphan Validation):</b> ถ้าผลพยากรณ์ T0 มีจุดความร้อนจริงรองรับ → เก็บ T0–T4 ทั้งหมด | ถ้าไม่มีจุดความร้อน →
+            ลบผลพยากรณ์ออกจาก data.json
         </div>
     </div>
 
@@ -1810,8 +1809,8 @@
                     <!-- Weather -->
                     <div
                         style="background:#fff;border:2px solid #0891b2;padding:10px 18px;border-radius:8px;text-align:center;width:100%;max-width:240px;">
-                        <div style="font-size:12px;font-weight:700;color:#0e7490;">ดึงสภาพอากาศ per-cluster</div>
-                        <div style="font-size:10px;color:#4a5568;">Open-Meteo API (current + hourly forecast 5 ชม.)<br>บันทึกลง DB (prediction_weather)</div>
+                        <div style="font-size:12px;font-weight:700;color:#0e7490;">ดึงสภาพอากาศรายคลัสเตอร์</div>
+                        <div style="font-size:10px;color:#4a5568;">Open-Meteo API (ปัจจุบัน + พยากรณ์รายชั่วโมง 5 ชม.)<br>บันทึกลงฐานข้อมูล (prediction_weather)</div>
                     </div>
                     <div style="width:2px;height:16px;background:#94a3b8;"></div>
 
@@ -1901,8 +1900,8 @@
                 <!-- Export -->
                 <div
                     style="background:#fff;border:2px solid #334155;padding:10px 24px;border-radius:8px;text-align:center;max-width:420px;width:100%;">
-                    <div style="font-size:13px;font-weight:700;color:#1e293b;">Export data.json → Push</div>
-                    <div style="font-size:10px;color:#4a5568;">GitHub → Vercel Auto-Deploy → แสดงผลบนแผนที่</div>
+                    <div style="font-size:13px;font-weight:700;color:#1e293b;">ส่งออก data.json → Push ขึ้น GitHub</div>
+                    <div style="font-size:10px;color:#4a5568;">GitHub → เผยแพร่อัตโนมัติผ่าน Vercel → แสดงผลบนแผนที่</div>
                 </div>
                 <div style="width:2px;height:20px;background:#94a3b8;"></div>
 
@@ -1969,7 +1968,7 @@
                         อุณหภูมิ <b>25°C</b> | ความชื้นสัมพัทธ์ <b>85%</b> | ลม <b>1 m/s</b><br>
                         → M<sub>f</sub> ≈ <span style="color:#16a34a;">0.155</span> (เชื้อเพลิงชื้น)<br>
                         → R ≈ <span style="color:#16a34a;">10 ม./ชม.</span> (ค่าขั้นต่ำ)<br>
-                        → P<sub>spread</sub> = 0.089 × dampening = <b>0.018</b><br>
+                        → P<sub>spread</sub> = 0.089 × ตัวหน่วง = <b>0.018</b><br>
                         → CA 4 ชม.: ขยาย <b>0–1 เซลล์</b><br>
                         → Risk Score: <span style="color:#16a34a;font-weight:700;">ต่ำ</span>
                     </div>
@@ -1983,7 +1982,7 @@
         ระบบพยากรณ์การลามของไฟป่า — ภาคเหนือตอนบน 8 จังหวัด<br>
         อ้างอิง: Rothermel, R.C. (1972) "A Mathematical Model for Predicting Fire Spread in Wildland Fuels" USDA
         Forest Service INT-115 (PB210095)<br>
-        ปรับ M<sub>x</sub> สำหรับเขตร้อนชื้น | อัพเดตอัตโนมัติทุก 1 ชั่วโมง
+        ปรับ M<sub>x</sub> สำหรับเขตร้อนชื้น | อัปเดตอัตโนมัติทุก 1 ชั่วโมง
     </div>
 
     </div>
